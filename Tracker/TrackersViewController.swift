@@ -11,14 +11,18 @@ class TrackersViewController: UIViewController {
     
     // Создаем массив с созданными трекерами
     private var categories: [TrackerCategory] = []
-    private var visibleCategories: [TrackerCategory] = []
+    private var visibleCategories: [Tracker] = [
+        Tracker(emoji: "❤️", text: "Поливать растения", backgroundColor: .colorSelection3, buttonColor: .colorSelection3, dayCount: "1 день"),
+        Tracker(emoji: "😻", text: "Кошка заслонила камеру на созвоне", backgroundColor: .colorSelection5, buttonColor: .colorSelection5, dayCount: "5 дней")
+    ]
     
     // MARK: - UI ELEMENTS
     
     // Создаем экземпляр коллекции
-    let trackerCollectionView: UICollectionView = {
+    var trackerCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+
         return collectionView
     }()
     
@@ -27,6 +31,7 @@ class TrackersViewController: UIViewController {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
+        picker.calendar.firstWeekday = 2
         return picker
     }()
     
@@ -35,7 +40,7 @@ class TrackersViewController: UIViewController {
         let mainLabel = UILabel()
         mainLabel.text = "Трекеры"
         mainLabel.textColor = .ypBlack
-        mainLabel.font = UIFont.boldSystemFont(ofSize: 34)
+        mainLabel.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         return mainLabel
     }()
     
@@ -53,6 +58,7 @@ class TrackersViewController: UIViewController {
         return emptyCollectionIcon
     }()
     
+    // Подпись под картинкой-заглушкой
     private lazy var emptyCollectionLabel: UILabel = {
         let label = UILabel()
         label.text = "Что будем отслеживать?"
@@ -75,7 +81,7 @@ class TrackersViewController: UIViewController {
         
         // Устанавливаем кнопки в NavigationBar
         if let navBar = navigationController?.navigationBar {
-            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: .none)
+            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTaped))
             addButton.tintColor = .ypBlack
             navBar.topItem?.setLeftBarButton(addButton, animated: false)
             
@@ -83,6 +89,13 @@ class TrackersViewController: UIViewController {
             navBar.topItem?.setRightBarButton(datePickerButton, animated: false)
         }
     }
+    
+    @objc func addButtonTaped() {
+        let modalVC = AddTrackerViewController()
+        modalVC.modalTransitionStyle = .coverVertical
+        present(modalVC, animated: true)
+    }
+    
     
     // MARK: - UI ELEMENTS LAYOUT
     
@@ -142,6 +155,15 @@ extension TrackersViewController: UICollectionViewDataSource {
     // Создаем ячейку для отображения на экране
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! TrackerCollectionViewCell
+        
+        // Подтягиваем ячейку из массива
+        let tracker = visibleCategories[indexPath.item]
+        cell.emojiLabel.text = tracker.emoji
+        cell.trackerText.text = tracker.text
+        cell.upperView.backgroundColor = tracker.backgroundColor
+        cell.actionButton.tintColor = tracker.buttonColor
+        cell.dayCountLabel.text = tracker.dayCount
+        
         return cell
     }
 }
@@ -151,6 +173,27 @@ extension TrackersViewController: UICollectionViewDelegate {
 }
 
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        return CGSize(width: (collectionView.bounds.width / 2) - 20.0, height: 148)
+
+    }
     
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        return 10
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        UIEdgeInsets(top: 0.0, left: 15.0, bottom: 0.0, right: 15.0)
+    }
 }
+
+
 
