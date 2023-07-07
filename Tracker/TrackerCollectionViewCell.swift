@@ -139,11 +139,11 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     // MARK: - TRACKER STRUCTURES
 
 struct Tracker {
-    var emoji: String
-    var text: String
-    var backgroundColor: UIColor
-    var buttonColor: UIColor
-    var dayCount: String
+    let emoji: String
+    let text: String
+    let backgroundColor: UIColor
+    let buttonColor: UIColor
+    let dayCount: String
     
     init(emoji: String, text: String, backgroundColor: UIColor, buttonColor: UIColor, dayCount: String) {
         self.emoji = emoji

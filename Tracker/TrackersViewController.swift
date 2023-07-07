@@ -7,13 +7,37 @@
 
 import UIKit
 
+// Создаем класс для заголовка секции
+class SectionHeader: UICollectionReusableView {
+    var titleLabel: UILabel!
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        titleLabel = UILabel()
+        titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(titleLabel)
+        
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 28),
+            titleLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor)
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}
+
 class TrackersViewController: UIViewController {
     
     // Создаем массив с созданными трекерами
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [Tracker] = [
-        Tracker(emoji: "❤️", text: "Поливать растения", backgroundColor: .colorSelection3, buttonColor: .colorSelection3, dayCount: "1 день"),
-        Tracker(emoji: "😻", text: "Кошка заслонила камеру на созвоне", backgroundColor: .colorSelection5, buttonColor: .colorSelection5, dayCount: "5 дней")
+        Tracker(emoji: "❤️", text: "Поливать растения", backgroundColor: .colorSelection5, buttonColor: .colorSelection5, dayCount: "1 день"),
+        Tracker(emoji: "😻", text: "Кошка заслонила камеру на созвоне", backgroundColor: .colorSelection2, buttonColor: .colorSelection2, dayCount: "5 дней")
     ]
     
     // MARK: - UI ELEMENTS
@@ -21,10 +45,19 @@ class TrackersViewController: UIViewController {
     // Создаем экземпляр коллекции
     var trackerCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        
+        // Регистрируем тип ячеек
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        
+        // Регистрируем тип хедера
+        collectionView.register(SectionHeader.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: "header")
 
         return collectionView
     }()
+    
+    
     
     // Создаем экземпляр DatePicker
     let datePicker: UIDatePicker = {
@@ -173,6 +206,8 @@ extension TrackersViewController: UICollectionViewDelegate {
 }
 
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
+    
+    // Задаем размер каждого элемента (ячейки) в коллекции
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -182,6 +217,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
     }
     
+    // Задаем минимальное расстояние между элементами в строке
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -190,8 +226,29 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         return 10
     }
     
+    // Задаем отступы для всей секции
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         UIEdgeInsets(top: 0.0, left: 15.0, bottom: 0.0, right: 15.0)
+    }
+    
+    // Высота заголовка
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: collectionView.frame.width, height: 50) // Высота хедера
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
+                                                                         withReuseIdentifier: "header",
+                                                                         for: indexPath) as! SectionHeader
+            // Устанавливаем заголовок для секции
+            headerView.titleLabel.text = "Домашний уют"
+            return headerView
+            
+        default:
+            assert(false, "Invalid element type for SupplementaryElement")
+        }
     }
 }
 
