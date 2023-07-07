@@ -33,12 +33,22 @@ class SectionHeader: UICollectionReusableView {
 
 class TrackersViewController: UIViewController {
     
-    // Создаем массив с созданными трекерами
+    // Массив со всеми созданными трекерами
     private var categories: [TrackerCategory] = []
-    private var visibleCategories: [Tracker] = [
-        Tracker(emoji: "❤️", text: "Поливать растения", backgroundColor: .colorSelection5, buttonColor: .colorSelection5, dayCount: "1 день"),
-        Tracker(emoji: "😻", text: "Кошка заслонила камеру на созвоне", backgroundColor: .colorSelection2, buttonColor: .colorSelection2, dayCount: "5 дней")
+    
+    // Массив с видимыми на экране трекерами
+    private var visibleCategories: [[Tracker]] = [
+        // Секция 1
+        [Tracker(emoji: "❤️", text: "Поливать растения", backgroundColor: .colorSelection5, buttonColor: .colorSelection5, dayCount: "1 день")],
+        
+        // Секция 2
+        [Tracker(emoji: "😻", text: "Кошка заслонила камеру на созвоне", backgroundColor: .colorSelection2, buttonColor: .colorSelection2, dayCount: "5 дней"),
+         Tracker(emoji: "🌺", text: "Бабушка прислала открытку в вотсаппе", backgroundColor: .colorSelection1, buttonColor: .colorSelection1, dayCount: "4 дня"),
+         Tracker(emoji: "❤️", text: "Свидания в апреле", backgroundColor: .colorSelection14, buttonColor: .colorSelection14, dayCount: "5 дней")]
     ]
+    
+    // Заголовки для секций (хедеры)
+    private var sectionTitles = ["Домашний уют", "Радостные мелочи"]
     
     // MARK: - UI ELEMENTS
     
@@ -180,9 +190,14 @@ class TrackersViewController: UIViewController {
 // MARK: - EXTENSIONS
 
 extension TrackersViewController: UICollectionViewDataSource {
-    // Возвращаем коллекции количество элементов в массиве
+    // Возвращаем коллекции количество секций
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return visibleCategories.count
+    }
+    
+    // Возвращаем коллекции количество элементов в секции
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        visibleCategories.count
+        visibleCategories[section].count
     }
     
     // Создаем ячейку для отображения на экране
@@ -190,7 +205,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! TrackerCollectionViewCell
         
         // Подтягиваем ячейку из массива
-        let tracker = visibleCategories[indexPath.item]
+        let tracker = visibleCategories[indexPath.section][indexPath.item]
         cell.emojiLabel.text = tracker.emoji
         cell.trackerText.text = tracker.text
         cell.upperView.backgroundColor = tracker.backgroundColor
@@ -236,16 +251,16 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: collectionView.frame.width, height: 50) // Высота хедера
     }
     
+    // Отображаем заголовки на экране
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         switch kind {
         case UICollectionView.elementKindSectionHeader:
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
                                                                          withReuseIdentifier: "header",
                                                                          for: indexPath) as! SectionHeader
-            // Устанавливаем заголовок для секции
-            headerView.titleLabel.text = "Домашний уют"
+            // Устанавливаем заголовок для каждой секции
+            headerView.titleLabel.text = sectionTitles[indexPath.section]
             return headerView
-            
         default:
             assert(false, "Invalid element type for SupplementaryElement")
         }
