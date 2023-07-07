@@ -5,6 +5,8 @@
 //  Created by Artem Adiev on 02.07.2023.
 //
 
+// MARK: КЛАСС И СТРУКТУРЫ ТРЕКЕРОВ
+
 import UIKit
 
 final class TrackerCollectionViewCell: UICollectionViewCell {

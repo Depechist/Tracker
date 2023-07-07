@@ -5,6 +5,8 @@
 //  Created by Artem Adiev on 15.06.2023.
 //
 
+// MARK: ГЛАВНЫЙ ЭКРАН
+
 import UIKit
 
 // Создаем класс для заголовка секции
@@ -90,6 +92,7 @@ class TrackersViewController: UIViewController {
     // Создаем экземпляр UISearchTextField
     private lazy var searchField: UISearchTextField = {
         let field = UISearchTextField()
+        field.backgroundColor = .ypBackground
         field.placeholder = "Поиск"
         return field
     }()
@@ -115,11 +118,14 @@ class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Создаем Нотификатор для сигнала об отмене создания трекера и закрытии всех модальных экранов
+        NotificationCenter.default.addObserver(self, selector: #selector(closeAllModalViewControllers),
+                                               name: Notification.Name("CloseAllModals"), object: nil)
+        
         // Устанавливаем фон для экрана
         view.backgroundColor = .ypWhite
         
         // Отображаем коллекцию и другие UI элементы
-        setupTrackerCollectionView()
         addSubviews()
         
         // Устанавливаем кнопки в NavigationBar
@@ -133,10 +139,16 @@ class TrackersViewController: UIViewController {
         }
     }
     
+    // Задаем клик на кнопку + в навбаре
     @objc func addButtonTaped() {
         let modalVC = AddTrackerViewController()
         modalVC.modalTransitionStyle = .coverVertical
         present(modalVC, animated: true)
+    }
+    
+    // Задаем закрытие всех модальных экранов в случае отмены создания трекера
+    @objc func closeAllModalViewControllers() {
+        self.dismiss(animated: true, completion: nil)
     }
     
     
@@ -147,6 +159,9 @@ class TrackersViewController: UIViewController {
         searchField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(mainLabel)
         view.addSubview(searchField)
+         
+        trackerCollectionView.dataSource = self
+        trackerCollectionView.delegate = self
         
         NSLayoutConstraint.activate([
             mainLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -178,12 +193,6 @@ class TrackersViewController: UIViewController {
                 trackerCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
             ])
         }
-    }
-    
-    // Настраиваем коллекцию для отображения
-    private func setupTrackerCollectionView() {
-        trackerCollectionView.dataSource = self
-        trackerCollectionView.delegate = self
     }
 }
 

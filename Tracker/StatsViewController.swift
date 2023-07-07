@@ -5,6 +5,8 @@
 //  Created by Artem Adiev on 02.07.2023.
 //
 
+// MARK: ЭКРАН СТАТИСТИКИ
+
 import UIKit
 
 class StatsViewController: UIViewController {

@@ -5,6 +5,8 @@
 //  Created by Artem Adiev on 05.07.2023.
 //
 
+// MARK: ЭКРАН ВЫБОРА ТИПА ТРЕКЕРА
+
 import UIKit
 
 class AddTrackerViewController: UIViewController {
@@ -44,6 +46,7 @@ class AddTrackerViewController: UIViewController {
     
     private func addSubviews() {
         habitButton.addTarget(self, action: #selector(habitButtonTaped), for: .touchUpInside)
+        eventButton.addTarget(self, action: #selector(eventButtonTaped), for: .touchUpInside)
 
         habitButton.translatesAutoresizingMaskIntoConstraints = false
         eventButton.translatesAutoresizingMaskIntoConstraints = false
@@ -64,7 +67,13 @@ class AddTrackerViewController: UIViewController {
     }
     
     @objc private func habitButtonTaped() {
-        let modalVC = NewTrackerViewController()
+        let modalVC = NewHabitViewController()
+        modalVC.modalTransitionStyle = .coverVertical
+        present(modalVC, animated: true)
+    }
+    
+    @objc private func eventButtonTaped() {
+        let modalVC = NewEventViewController()
         modalVC.modalTransitionStyle = .coverVertical
         present(modalVC, animated: true)
     }
