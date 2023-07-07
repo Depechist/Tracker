@@ -76,7 +76,7 @@ class NewEventViewController: UIViewController {
         navBar.shadowImage = UIImage()
         navBar.setBackgroundImage(UIImage(), for: .default)
         view.addSubview(navBar)
-        let navTitle = UINavigationItem(title: "Новая привычка")
+        let navTitle = UINavigationItem(title: "Новое нерегулярное событие")
         navBar.setItems([navTitle], animated: false)
         
         // Добавляем UI элементы

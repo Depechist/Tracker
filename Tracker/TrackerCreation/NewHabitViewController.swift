@@ -9,7 +9,7 @@
 
 import UIKit
 
-    //MARK: - TABLEVIEW BUTTON CLASS
+    //MARK: - TABLEVIEW BUTTON CELL
 
 class ButtonTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -172,13 +172,22 @@ extension NewHabitViewController: UITableViewDataSource, UITableViewDelegate {
             cell.textLabel?.text = "Расписание"
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
         }
-        
+
         return cell
     }
     
     // Высота для каждой ячейки
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        if indexPath.row == 1 {
+            let sheduleVC = SheduleViewController()
+            self.present(sheduleVC, animated: true)
+        }
     }
 }
 

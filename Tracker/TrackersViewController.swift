@@ -160,6 +160,7 @@ class TrackersViewController: UIViewController {
         view.addSubview(mainLabel)
         view.addSubview(searchField)
          
+        // Задаем делегата и датасоурс для коллекции
         trackerCollectionView.dataSource = self
         trackerCollectionView.delegate = self
         
