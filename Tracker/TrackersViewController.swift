@@ -15,7 +15,6 @@ class SectionHeader: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         titleLabel = UILabel()
         titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -26,11 +25,9 @@ class SectionHeader: UICollectionReusableView {
             titleLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor)
         ])
     }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }
 
 class TrackersViewController: UIViewController {
@@ -39,15 +36,20 @@ class TrackersViewController: UIViewController {
     private var categories: [TrackerCategory] = []
     
     // Массив с видимыми на экране трекерами
-    private var visibleCategories: [[Tracker]] = [
-        // Секция 1
-        [Tracker(emoji: "❤️", text: "Поливать растения", backgroundColor: .colorSelection5, buttonColor: .colorSelection5, dayCount: "1 день")],
-        
-        // Секция 2
-        [Tracker(emoji: "😻", text: "Кошка заслонила камеру на созвоне", backgroundColor: .colorSelection2, buttonColor: .colorSelection2, dayCount: "5 дней"),
-         Tracker(emoji: "🌺", text: "Бабушка прислала открытку в вотсаппе", backgroundColor: .colorSelection1, buttonColor: .colorSelection1, dayCount: "4 дня"),
-         Tracker(emoji: "❤️", text: "Свидания в апреле", backgroundColor: .colorSelection14, buttonColor: .colorSelection14, dayCount: "5 дней")]
-    ]
+    private var visibleCategories: [TrackerCategory] = []
+    
+    // Хранилище записей завершенных трекеров
+    private var completedTrackers: [TrackerRecord] = []
+    
+//    private var visibleCategories: [TrackerCategory] = [
+//        // Секция 1
+//        [Tracker(title: "Домашний уют", emoji: "❤️", text: "Поливать растения", backgroundColor: .colorSelection5, buttonColor: .colorSelection5, dayCount: "1 день")],
+//
+//        // Секция 2
+//        [Tracker(title: "Радостные мелочи", emoji: "😻", text: "Кошка заслонила камеру на созвоне", backgroundColor: .colorSelection2, buttonColor: .colorSelection2, dayCount: "5 дней"),
+//         Tracker(title: "Радостные мелочи", emoji: "🌺", text: "Бабушка прислала открытку в вотсаппе", backgroundColor: .colorSelection1, buttonColor: .colorSelection1, dayCount: "4 дня"),
+//         Tracker(title: "Радостные мелочи", emoji: "❤️", text: "Свидания в апреле", backgroundColor: .colorSelection14, buttonColor: .colorSelection14, dayCount: "5 дней")]
+//    ]
     
     // Заголовки для секций (хедеры)
     private var sectionTitles = ["Домашний уют", "Радостные мелочи"]
@@ -59,17 +61,15 @@ class TrackersViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         
         // Регистрируем тип ячеек
-        collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(TrackerCell.self, forCellWithReuseIdentifier: "cell")
         
         // Регистрируем тип хедера
         collectionView.register(SectionHeader.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: "header")
-
+        
         return collectionView
     }()
-    
-    
     
     // Создаем экземпляр DatePicker
     let datePicker: UIDatePicker = {
@@ -151,15 +151,29 @@ class TrackersViewController: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
+    // По ID проверяем завершен ли трекер именно сегодня
+    private func isTrackerCompletedToday(id: UUID) -> Bool {
+        completedTrackers.contains { trackerRecord in
+            isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
+        }
+    }
+    
+    // Метод для сравнения записей о трекере
+    private func isSameTrackerRecord(trackerRecord: TrackerRecord, id: UUID) -> Bool {
+        let isSameDay = Calendar.current.isDate(trackerRecord.date,
+                                                inSameDayAs: datePicker.date)
+        return trackerRecord.trackerId == id && isSameDay
+    }
+    
     
     // MARK: - UI ELEMENTS LAYOUT
     
-     private func addSubviews() {
+    private func addSubviews() {
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         searchField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(mainLabel)
         view.addSubview(searchField)
-         
+        
         // Задаем делегата и датасоурс для коллекции
         trackerCollectionView.dataSource = self
         trackerCollectionView.delegate = self
@@ -199,6 +213,21 @@ class TrackersViewController: UIViewController {
 
 // MARK: - EXTENSIONS
 
+extension TrackersViewController: TrackerCellDelegate {
+    func completeTracker(id: UUID, at indexPath: IndexPath) {
+        let trackerRecord = TrackerRecord(trackerId: id, date: datePicker.date)
+        completedTrackers.append(trackerRecord)
+        trackerCollectionView.reloadItems(at: [indexPath])
+    }
+    
+    func uncompleteTracker(id: UUID, at indexPath: IndexPath) {
+        completedTrackers.removeAll { trackerRecord in
+            isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
+        }
+        trackerCollectionView.reloadItems(at: [indexPath])
+    }
+}
+
 extension TrackersViewController: UICollectionViewDataSource {
     // Возвращаем коллекции количество секций
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -207,28 +236,36 @@ extension TrackersViewController: UICollectionViewDataSource {
     
     // Возвращаем коллекции количество элементов в секции
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        visibleCategories[section].count
+        let trackers = visibleCategories[section].trackers
+        return trackers.count
     }
     
     // Создаем ячейку для отображения на экране
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! TrackerCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! TrackerCell
         
-        // Подтягиваем ячейку из массива
-        let tracker = visibleCategories[indexPath.section][indexPath.item]
-        cell.emojiLabel.text = tracker.emoji
-        cell.trackerText.text = tracker.text
-        cell.upperView.backgroundColor = tracker.backgroundColor
-        cell.actionButton.tintColor = tracker.buttonColor
-        cell.dayCountLabel.text = tracker.dayCount
+        let cellData = visibleCategories
+        let tracker = cellData[indexPath.section].trackers[indexPath.item]
+        
+        cell.delegate = self
+        
+        // Передаем значение того завершен ли трекер сегодня
+        let isCompletedToday = isTrackerCompletedToday(id: tracker.id)
+        // Считаем сколько записей хранится в выполненных трекерах с конкретным ID
+        let completedDays = completedTrackers.filter { $0.trackerId == tracker.id }.count
+        cell.configure(
+            with: tracker,
+            isCompletedToday: isCompletedToday,
+            completedDays: completedDays,
+            indexPath: indexPath)
         
         return cell
     }
 }
 
-extension TrackersViewController: UICollectionViewDelegate {
-    
-}
+//extension TrackersViewController: UICollectionViewDelegate {
+//
+//}
 
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     
@@ -239,7 +276,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         return CGSize(width: (collectionView.bounds.width / 2) - 20.0, height: 148)
-
+        
     }
     
     // Задаем минимальное расстояние между элементами в строке
@@ -266,8 +303,8 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         switch kind {
         case UICollectionView.elementKindSectionHeader:
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
-                                                                         withReuseIdentifier: "header",
-                                                                         for: indexPath) as! SectionHeader
+                                                                             withReuseIdentifier: "header",
+                                                                             for: indexPath) as! SectionHeader
             // Устанавливаем заголовок для каждой секции
             headerView.titleLabel.text = sectionTitles[indexPath.section]
             return headerView
@@ -276,6 +313,4 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         }
     }
 }
-
-
 

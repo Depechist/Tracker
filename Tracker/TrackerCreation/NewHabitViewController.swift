@@ -181,9 +181,11 @@ extension NewHabitViewController: UITableViewDataSource, UITableViewDelegate {
         return 75
     }
     
+    // Переключаем на модальный экран с расписанием при тапе на кнопку "Расписание"
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        // Если вторая кнопка, то открываем расписание
         if indexPath.row == 1 {
             let sheduleVC = SheduleViewController()
             self.present(sheduleVC, animated: true)
