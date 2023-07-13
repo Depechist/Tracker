@@ -52,6 +52,7 @@ class TrackersViewController: UIViewController {
     // Создаем экземпляр коллекции
     var trackerCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.backgroundColor = .clear
         
         // Регистрируем тип ячеек
         collectionView.register(TrackerCell.self, forCellWithReuseIdentifier: "cell")
@@ -95,9 +96,6 @@ class TrackersViewController: UIViewController {
         picker.datePickerMode = .date
         picker.calendar.firstWeekday = 2
 
-        //+++ Отслеживаем изменения значения пикера
-//        picker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
-
         return picker
     }()
     
@@ -111,23 +109,25 @@ class TrackersViewController: UIViewController {
     }()
     
     // Создаем экземпляр UISearchTextField
-    private lazy var searchField: UISearchTextField = {
+    private lazy var searchTextField: UISearchTextField = {
         let field = UISearchTextField()
         field.backgroundColor = .ypBackground
         field.placeholder = "Поиск"
         field.returnKeyType = .done
+        // Для работы поиска и отображения соотв коллекций - объявляем делегат
+        field.delegate = self
         return field
     }()
     
     // Создаем картинку-заглушку для пустой коллекции
-    private lazy var emptyCollectionIcon: UIImageView = {
+    private lazy var placeholderImage: UIImageView = {
         let image = UIImage(named: "EmptyCollectionIcon")
         let emptyCollectionIcon = UIImageView(image: image)
         return emptyCollectionIcon
     }()
     
     // Подпись под картинкой-заглушкой
-    private lazy var emptyCollectionLabel: UILabel = {
+    private lazy var placeholderLabel: UILabel = {
         let label = UILabel()
         label.text = "Что будем отслеживать?"
         label.textColor = .ypBlack
@@ -140,11 +140,14 @@ class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //+++
+        // Обновляем данные в зависимости от наличия трекеров и даты
         reloadData()
         
-        //+++ Отслеживаем изменения значения пикера
+        // Отслеживаем изменения значения пикера
         datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
+        
+        // Отслеживаем изменения в поисковой строке и выдаем трекеры в реальном времени
+        searchTextField.addTarget(self, action: #selector(searchTextChanged), for: .editingChanged)
         
         // Создаем Нотификатор для сигнала об отмене создания трекера и закрытии всех модальных экранов
         NotificationCenter.default.addObserver(self, selector: #selector(closeAllModalViewControllers),
@@ -195,35 +198,82 @@ class TrackersViewController: UIViewController {
     
     private func reloadData() {
         categories = dataManager.categories
-        visibleCategories = categories
+        dateChanged()
     }
     
+    // При изменении даты производим фильтрацию массива VisibleCategories по weekday.numberValue
     @objc private func dateChanged() {
+//        updateDateLabelTitle(with: datePicker.date) // Исправляет datePicker при смене даты (альт. datePicker)
+        reloadVisibleCategories()
+    }
+    
+    @objc private func searchTextChanged() {
+        reloadVisibleCategories()
+    }
+    
+    // При изменении даты и с учетом поиска производим фильтрацию массива VisibleCategories
+    // по weekDay.numberValue и searchTextField
+    private func reloadVisibleCategories() {
         let calendar = Calendar.current
         let filterWeekDay = calendar.component(.weekday, from: datePicker.date)
+        let filterText = (searchTextField.text ?? "").lowercased() // Уходим от зависимости от регистра и переводим в lowercased
         
-        // При изменении даты производим фильтрацию массива VisibleCategories по weekday.numberValue
-        visibleCategories = categories.map { category in
-            TrackerCategory(
+        // Для исправления бага с отображением заголовка для пустой секции...
+        // ...Пользуемся методом compactMap, который как бы "проглатывает малое внутри себя"
+        visibleCategories = categories.compactMap { category in
+            let trackers = category.trackers.filter { tracker in
+                // Условие по тексту в поиске
+                let textCondition = filterText.isEmpty || // Если поле пустое, то отображаем в любом случае
+                    tracker.text.lowercased().contains(filterText) // Если не пустое, то сверяем текст из поля с текстом из трекера
+                // Условие по дате в datePicker'е
+                let dateCondition = tracker.shedule?.contains { weekDay in
+                    weekDay.numberValue == filterWeekDay
+                } == true
+                
+                // Сверяемся с двумя условиями и возвращаем их
+                return textCondition && dateCondition
+            }
+            
+            // ...А также если категория пуста - пропускаем ее
+            if trackers.isEmpty {
+                return nil
+            }
+            
+            return TrackerCategory(
                 title: category.title,
-                trackers: category.trackers.filter { tracker in
-                    tracker.shedule?.contains { weekDay in
-                        weekDay.numberValue == filterWeekDay
-                    } == true
-                }
+                trackers: trackers
             )
         }
         // Перезагружаем коллекцию в соответствии с результатом
         trackerCollectionView.reloadData()
+        reloadPlaceholder()
+    }
+    
+    // Отображаем плейсхолдер если трекеров еще нет
+    private func reloadPlaceholder() {
+        if !categories.isEmpty {
+            placeholderImage.isHidden = true
+            placeholderLabel.isHidden = true
+        } else if visibleCategories.isEmpty { // TODO: Условие не работает, плейсхолдер не отображается.
+            placeholderImage.isHidden = false
+            placeholderLabel.isHidden = false
+            placeholderLabel.text = "На сегодня задач нет"
+        }
     }
     
     // MARK: - UI ELEMENTS LAYOUT
     
     private func addSubviews() {
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
-        searchField.translatesAutoresizingMaskIntoConstraints = false
+        searchTextField.translatesAutoresizingMaskIntoConstraints = false
+        placeholderImage.translatesAutoresizingMaskIntoConstraints = false
+        placeholderLabel.translatesAutoresizingMaskIntoConstraints = false
+        trackerCollectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(mainLabel)
-        view.addSubview(searchField)
+        view.addSubview(searchTextField)
+        view.addSubview(trackerCollectionView)
+        view.addSubview(placeholderImage)
+        view.addSubview(placeholderLabel)
         
         // Задаем делегата и датасоурс для коллекции
         trackerCollectionView.dataSource = self
@@ -232,37 +282,37 @@ class TrackersViewController: UIViewController {
         NSLayoutConstraint.activate([
             mainLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             mainLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            searchField.topAnchor.constraint(equalTo: mainLabel.bottomAnchor, constant: 7),
-            searchField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            searchField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-        ])
-        
-        if visibleCategories.count == 0 {
-            emptyCollectionIcon.translatesAutoresizingMaskIntoConstraints = false
-            emptyCollectionLabel.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(emptyCollectionIcon)
-            view.addSubview(emptyCollectionLabel)
+            searchTextField.topAnchor.constraint(equalTo: mainLabel.bottomAnchor, constant: 7),
+            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-            NSLayoutConstraint.activate([
-                emptyCollectionIcon.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                emptyCollectionIcon.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                emptyCollectionLabel.topAnchor.constraint(equalTo: emptyCollectionIcon.bottomAnchor, constant: 8),
-                emptyCollectionLabel.centerXAnchor.constraint(equalTo: emptyCollectionIcon.centerXAnchor)
-            ])
-        } else {
-            trackerCollectionView.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(trackerCollectionView)
-            NSLayoutConstraint.activate([
-                trackerCollectionView.topAnchor.constraint(equalTo: searchField.bottomAnchor, constant: 10),
-                trackerCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-                trackerCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                trackerCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            ])
-        }
+            placeholderImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            placeholderImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            placeholderLabel.topAnchor.constraint(equalTo: placeholderImage.bottomAnchor, constant: 8),
+            placeholderLabel.centerXAnchor.constraint(equalTo: placeholderImage.centerXAnchor),
+            
+            trackerCollectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10),
+            trackerCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            trackerCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            trackerCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
     }
 }
 
 // MARK: - EXTENSIONS
+
+// Экстенш для корректной работы поисковой строки
+extension TrackersViewController: UITextFieldDelegate {
+    
+    // Метод который работает по кнопке Готово (done) и возвращает результат
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder() // скрывает текстфилд
+        
+        reloadVisibleCategories()
+        
+        return true // Возвращаем совершение действия (можно отменять, но это сейчас не нужно)
+    }
+}
 
 extension TrackersViewController: TrackerCellDelegate {
     func completeTracker(id: UUID, at indexPath: IndexPath) {

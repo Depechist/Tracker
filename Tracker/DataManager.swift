@@ -18,8 +18,8 @@ class DataManager {
     // Массив с моковыми данными
     var categories: [TrackerCategory] = [
         TrackerCategory(title: "Домашний уют", trackers:
-                            [Tracker(id: UUID(), date: Date(), emoji: "❤️", text: "Поливать растения", color: .colorSelection5, dayCount: 1, shedule: [.monday, .tuesday, .saturday])]),
-        
+                            [Tracker(id: UUID(), date: Date(), emoji: "❤️", text: "Поливать растения", color: .colorSelection5, dayCount: 1, shedule: [.monday])]),
+
         TrackerCategory(title: "Радостные мелочи", trackers:
                             [Tracker(id: UUID(), date: Date(), emoji: "😻", text: "Кошка заслонила камеру на созвоне", color: .colorSelection2, dayCount: 5, shedule: [.monday, .sunday, .thursday]),
                              Tracker(id: UUID(), date: Date(), emoji: "🌺", text: "Бабушка прислала открытку в вотсаппе", color: .colorSelection1, dayCount: 4, shedule: [.wednesday, .thursday, .saturday]),

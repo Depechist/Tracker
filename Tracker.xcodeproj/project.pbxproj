@@ -84,10 +84,10 @@
 			children = (
 				8A7CEA502A3B36DC005007D2 /* AppDelegate.swift */,
 				8A7CEA522A3B36DC005007D2 /* SceneDelegate.swift */,
+				8AAE717C2A6027E10042AE3E /* DataManager.swift */,
 				8A6E42792A5C5E7B00CE2D0B /* TrackerModel.swift */,
 				8A7CEA542A3B36DC005007D2 /* TrackersViewController.swift */,
 				8A4F23572A519914009DE378 /* TrackerCell.swift */,
-				8AAE717C2A6027E10042AE3E /* DataManager.swift */,
 				8AFF348C2A58565B00074DDE /* TrackerCreation */,
 				8A4F23552A518797009DE378 /* StatsViewController.swift */,
 				8A3923152A5157E100DA2752 /* Helpers */,
