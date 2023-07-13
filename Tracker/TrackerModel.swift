@@ -10,16 +10,14 @@ import UIKit
 struct Tracker {
     let id: UUID
     let date: Date
-    let title: String
     let emoji: String
     let text: String
     let color: UIColor
-    let dayCount: String
+    let dayCount: Int
     
-    init(id: UUID, date: Date, title: String, emoji: String, text: String, color: UIColor, dayCount: String) {
+    init(id: UUID, date: Date, emoji: String, text: String, color: UIColor, dayCount: Int) {
         self.id = id
         self.date = date
-        self.title = title
         self.emoji = emoji
         self.text = text
         self.color = color

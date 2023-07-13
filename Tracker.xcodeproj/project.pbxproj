@@ -16,9 +16,9 @@
 		8A7CEA512A3B36DC005007D2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CEA502A3B36DC005007D2 /* AppDelegate.swift */; };
 		8A7CEA532A3B36DC005007D2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CEA522A3B36DC005007D2 /* SceneDelegate.swift */; };
 		8A7CEA552A3B36DC005007D2 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CEA542A3B36DC005007D2 /* TrackersViewController.swift */; };
-		8A7CEA582A3B36DC005007D2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A7CEA562A3B36DC005007D2 /* Main.storyboard */; };
 		8A7CEA5A2A3B36DE005007D2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A7CEA592A3B36DE005007D2 /* Assets.xcassets */; };
 		8A7CEA5D2A3B36DE005007D2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A7CEA5B2A3B36DE005007D2 /* LaunchScreen.storyboard */; };
+		8AD589472A6013DC007C01BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AD589462A6013DC007C01BF /* Main.storyboard */; };
 		8AFF34892A583CFA00074DDE /* NewEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFF34882A583CFA00074DDE /* NewEventViewController.swift */; };
 		8AFF348B2A58565000074DDE /* SheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFF348A2A58565000074DDE /* SheduleViewController.swift */; };
 /* End PBXBuildFile section */
@@ -34,10 +34,10 @@
 		8A7CEA502A3B36DC005007D2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8A7CEA522A3B36DC005007D2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		8A7CEA542A3B36DC005007D2 /* TrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewController.swift; sourceTree = "<group>"; };
-		8A7CEA572A3B36DC005007D2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8A7CEA592A3B36DE005007D2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8A7CEA5C2A3B36DE005007D2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8A7CEA5E2A3B36DE005007D2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8AD589462A6013DC007C01BF /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		8AFF34882A583CFA00074DDE /* NewEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEventViewController.swift; sourceTree = "<group>"; };
 		8AFF348A2A58565000074DDE /* SheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheduleViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -88,8 +88,8 @@
 				8AFF348C2A58565B00074DDE /* TrackerCreation */,
 				8A4F23552A518797009DE378 /* StatsViewController.swift */,
 				8A3923152A5157E100DA2752 /* Helpers */,
-				8A7CEA562A3B36DC005007D2 /* Main.storyboard */,
 				8A7CEA592A3B36DE005007D2 /* Assets.xcassets */,
+				8AD589462A6013DC007C01BF /* Main.storyboard */,
 				8A7CEA5B2A3B36DE005007D2 /* LaunchScreen.storyboard */,
 				8A7CEA5E2A3B36DE005007D2 /* Info.plist */,
 			);
@@ -165,9 +165,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AD589472A6013DC007C01BF /* Main.storyboard in Resources */,
 				8A7CEA5D2A3B36DE005007D2 /* LaunchScreen.storyboard in Resources */,
 				8A7CEA5A2A3B36DE005007D2 /* Assets.xcassets in Resources */,
-				8A7CEA582A3B36DC005007D2 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,14 +195,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		8A7CEA562A3B36DC005007D2 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8A7CEA572A3B36DC005007D2 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		8A7CEA5B2A3B36DE005007D2 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

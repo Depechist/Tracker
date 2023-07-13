@@ -36,20 +36,22 @@ class TrackersViewController: UIViewController {
     private var categories: [TrackerCategory] = []
     
     // Массив с видимыми на экране трекерами
-    private var visibleCategories: [TrackerCategory] = []
+    private var visibleCategories: [TrackerCategory] =
+    
+    // Моковый массив трекеров
+    [
+        TrackerCategory(title: "Домашний уют", trackers:
+                            [Tracker(id: UUID(), date: Date(), emoji: "❤️", text: "Поливать растения", color: .colorSelection5, dayCount: 1)]),
+        
+        TrackerCategory(title: "Радостные мелочи", trackers:
+                            [Tracker(id: UUID(), date: Date(), emoji: "😻", text: "Кошка заслонила камеру на созвоне", color: .colorSelection2, dayCount: 5),
+                             Tracker(id: UUID(), date: Date(), emoji: "🌺", text: "Бабушка прислала открытку в вотсаппе", color: .colorSelection1, dayCount: 4),
+                             Tracker(id: UUID(), date: Date(), emoji: "❤️", text: "Свидания в апреле", color: .colorSelection14, dayCount: 5)
+                            ])
+    ]
     
     // Хранилище записей завершенных трекеров
     private var completedTrackers: [TrackerRecord] = []
-    
-//    private var visibleCategories: [TrackerCategory] = [
-//        // Секция 1
-//        [Tracker(title: "Домашний уют", emoji: "❤️", text: "Поливать растения", backgroundColor: .colorSelection5, buttonColor: .colorSelection5, dayCount: "1 день")],
-//
-//        // Секция 2
-//        [Tracker(title: "Радостные мелочи", emoji: "😻", text: "Кошка заслонила камеру на созвоне", backgroundColor: .colorSelection2, buttonColor: .colorSelection2, dayCount: "5 дней"),
-//         Tracker(title: "Радостные мелочи", emoji: "🌺", text: "Бабушка прислала открытку в вотсаппе", backgroundColor: .colorSelection1, buttonColor: .colorSelection1, dayCount: "4 дня"),
-//         Tracker(title: "Радостные мелочи", emoji: "❤️", text: "Свидания в апреле", backgroundColor: .colorSelection14, buttonColor: .colorSelection14, dayCount: "5 дней")]
-//    ]
     
     // Заголовки для секций (хедеры)
     private var sectionTitles = ["Домашний уют", "Радостные мелочи"]

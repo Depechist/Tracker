@@ -93,8 +93,8 @@ final class TrackerCell: UICollectionViewCell {
     // Кнопка +/- под трекером
     var plusButton: UIButton = {
         let button = UIButton()
-//        let templateImage = UIImage(named: "PlusButton")?.withRenderingMode(.alwaysTemplate)
-//        button.setImage(templateImage, for: .normal)
+        let templateImage = UIImage(named: "PlusButton")?.withRenderingMode(.alwaysTemplate)
+        button.setImage(templateImage, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
         return button
@@ -103,30 +103,27 @@ final class TrackerCell: UICollectionViewCell {
     // Картинка для кнопки + под трекером
     var plusImage: UIImage = {
         let image = UIImage(named: "PlusButton")?.withRenderingMode(.alwaysTemplate) ?? UIImage()
+//        let image = UIImage(named: "PlusButton") ?? UIImage()
         return image
     }()
     
     // Картинка для кнопки done под трекером
     var doneImage: UIImage = {
-        let image = UIImage(named: "DoneButton")?.withRenderingMode(.alwaysTemplate) ?? UIImage()
+        let image = UIImage(named: "DoneButton") ?? UIImage()
+//        let image = UIImage(named: "DoneButton") ?? UIImage()
         return image
     }()
     
     // Метод для "собирания" ячейки
-    func configure(
-        with tracker: Tracker,
-        isCompletedToday: Bool,
-        completedDays: Int,
-        indexPath: IndexPath
-    ) {
+    func configure(with tracker: Tracker, isCompletedToday: Bool, completedDays: Int, indexPath: IndexPath) {
         self.trackerId = tracker.id
         self.isCompletedToday = isCompletedToday
         self.indexPath = indexPath
         
         let color = tracker.color
-
+    
         upperView.backgroundColor = color
-        plusButton.backgroundColor = color
+        plusButton.tintColor = color
         trackerText.text = tracker.text
         emojiLabel.text = tracker.emoji
         
