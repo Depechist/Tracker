@@ -32,23 +32,14 @@ class SectionHeader: UICollectionReusableView {
 
 class TrackersViewController: UIViewController {
     
+    // Объявляем синглтон с моковыми данными
+    private let dataManager = DataManager.shared
+    
     // Массив со всеми созданными трекерами
     private var categories: [TrackerCategory] = []
     
     // Массив с видимыми на экране трекерами
-    private var visibleCategories: [TrackerCategory] =
-    
-    // Моковый массив трекеров
-    [
-        TrackerCategory(title: "Домашний уют", trackers:
-                            [Tracker(id: UUID(), date: Date(), emoji: "❤️", text: "Поливать растения", color: .colorSelection5, dayCount: 1)]),
-        
-        TrackerCategory(title: "Радостные мелочи", trackers:
-                            [Tracker(id: UUID(), date: Date(), emoji: "😻", text: "Кошка заслонила камеру на созвоне", color: .colorSelection2, dayCount: 5),
-                             Tracker(id: UUID(), date: Date(), emoji: "🌺", text: "Бабушка прислала открытку в вотсаппе", color: .colorSelection1, dayCount: 4),
-                             Tracker(id: UUID(), date: Date(), emoji: "❤️", text: "Свидания в апреле", color: .colorSelection14, dayCount: 5)
-                            ])
-    ]
+    private var visibleCategories: [TrackerCategory] = []
     
     // Хранилище записей завершенных трекеров
     private var completedTrackers: [TrackerRecord] = []
@@ -73,12 +64,40 @@ class TrackersViewController: UIViewController {
         return collectionView
     }()
     
+//    private var dateLabel: UILabel {
+//        let label = UILabel()
+//        label.backgroundColor = .ypBackground
+//        label.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+//        label.textAlignment = .center
+//        label.clipsToBounds = true
+//        label.layer.cornerRadius = 16
+//        label.layer.zPosition = 10
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        return label
+//    }
+//
+//    private var datePicker: UIDatePicker {
+//        let picker = UIDatePicker()
+//        picker.preferredDatePickerStyle = .compact
+//        picker.datePickerMode = .date
+//        picker.locale = Locale(identifier: "ru_Ru")
+//        picker.calendar.firstWeekday = 2
+//        picker.clipsToBounds = true
+//        picker.layer.cornerRadius = 16
+//        picker.translatesAutoresizingMaskIntoConstraints = false
+//        return picker
+//    }
+    
     // Создаем экземпляр DatePicker
     let datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
         picker.calendar.firstWeekday = 2
+
+        //+++ Отслеживаем изменения значения пикера
+//        picker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
+
         return picker
     }()
     
@@ -96,6 +115,7 @@ class TrackersViewController: UIViewController {
         let field = UISearchTextField()
         field.backgroundColor = .ypBackground
         field.placeholder = "Поиск"
+        field.returnKeyType = .done
         return field
     }()
     
@@ -119,6 +139,12 @@ class TrackersViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //+++
+        reloadData()
+        
+        //+++ Отслеживаем изменения значения пикера
+        datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         
         // Создаем Нотификатор для сигнала об отмене создания трекера и закрытии всех модальных экранов
         NotificationCenter.default.addObserver(self, selector: #selector(closeAllModalViewControllers),
@@ -167,6 +193,29 @@ class TrackersViewController: UIViewController {
         return trackerRecord.trackerId == id && isSameDay
     }
     
+    private func reloadData() {
+        categories = dataManager.categories
+        visibleCategories = categories
+    }
+    
+    @objc private func dateChanged() {
+        let calendar = Calendar.current
+        let filterWeekDay = calendar.component(.weekday, from: datePicker.date)
+        
+        // При изменении даты производим фильтрацию массива VisibleCategories по weekday.numberValue
+        visibleCategories = categories.map { category in
+            TrackerCategory(
+                title: category.title,
+                trackers: category.trackers.filter { tracker in
+                    tracker.shedule?.contains { weekDay in
+                        weekDay.numberValue == filterWeekDay
+                    } == true
+                }
+            )
+        }
+        // Перезагружаем коллекцию в соответствии с результатом
+        trackerCollectionView.reloadData()
+    }
     
     // MARK: - UI ELEMENTS LAYOUT
     

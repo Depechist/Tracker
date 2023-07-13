@@ -14,14 +14,16 @@ struct Tracker {
     let text: String
     let color: UIColor
     let dayCount: Int
+    let shedule: [WeekDay]?
     
-    init(id: UUID, date: Date, emoji: String, text: String, color: UIColor, dayCount: Int) {
+    init(id: UUID, date: Date, emoji: String, text: String, color: UIColor, dayCount: Int, shedule: [WeekDay]) {
         self.id = id
         self.date = date
         self.emoji = emoji
         self.text = text
         self.color = color
         self.dayCount = dayCount
+        self.shedule = shedule
     }
 }
 
@@ -42,5 +44,20 @@ struct TrackerRecord {
     init(trackerId: UUID, date: Date) {
         self.trackerId = trackerId
         self.date = date
+    }
+}
+
+enum WeekDay: Int {
+    case sunday = 1 // Согласно системе в Calendar, воскресенье - это 1
+    case monday = 2
+    case tuesday = 3
+    case wednesday = 4
+    case thursday = 5
+    case friday = 6
+    case saturday = 7
+    
+    // Вычисляемое свойство, которое возвращает rawValue текущего дня недели
+    var numberValue: Int {
+        return self.rawValue
     }
 }
