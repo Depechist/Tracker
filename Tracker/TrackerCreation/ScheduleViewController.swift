@@ -25,6 +25,7 @@ class ScheduleTableViewCell: UITableViewCell {
 class ScheduleViewController: UIViewController {
     
     var selectedDays = [WeekDay]()
+    weak var delegate: ScheduleDelegate?
     
     // MARK: UI ELEMENTS
     
@@ -68,9 +69,29 @@ class ScheduleViewController: UIViewController {
         addSubviews()
     }
     
+    // Отслеживаем и сохраняем в массиве selectedDays отмеченные в расписании дни недели
+    @objc func switchChanged(_ sender: UISwitch) {
+        if let day = WeekDay(rawValue: sender.tag + 1) {
+            if sender.isOn {
+                selectedDays.append(day)
+            } else {
+                if let index = selectedDays.firstIndex(of: day) {
+                    selectedDays.remove(at: index)
+                }
+            }
+        }
+    }
+    
+    @objc func doneButtonTapped() {
+        delegate?.weekDaysChanged(weedDays: selectedDays)
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     // MARK: LAYOUT
     
     private func addSubviews() {
+        doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        
         weekDayTableView.translatesAutoresizingMaskIntoConstraints = false
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(weekDayTableView)
@@ -110,6 +131,8 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17)
         
         let switchView = UISwitch(frame: .zero)
+        switchView.tag = indexPath.row // Важно: сохраняем номер строки как тег
+        switchView.addTarget(self, action: #selector(switchChanged), for: .valueChanged)
         cell.accessoryView = switchView
         
         if indexPath.row == daysOfWeek.count - 1 {

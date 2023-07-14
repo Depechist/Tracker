@@ -96,7 +96,6 @@ final class TrackerCell: UICollectionViewCell {
         let templateImage = UIImage(named: "PlusButton")?.withRenderingMode(.alwaysTemplate)
         button.setImage(templateImage, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -153,7 +152,6 @@ final class TrackerCell: UICollectionViewCell {
         guard let trackerId = trackerId, let indexPath = indexPath else {
             assertionFailure("No tracker ID")
             return }
-        
         if isCompletedToday {
             delegate?.uncompleteTracker(id: trackerId, at: indexPath)
         } else {
@@ -167,6 +165,8 @@ final class TrackerCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        plusButton.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
+
         contentView.addSubview(upperView)
         contentView.addSubview(lowerView)
         upperView.addSubview(emojiBackgroundView)

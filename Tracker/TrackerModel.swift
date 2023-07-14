@@ -16,11 +16,11 @@ struct Tracker {
     let dayCount: Int
     let schedule: [WeekDay]?
     
-    init(id: UUID, date: Date, emoji: String, text: String, color: UIColor, dayCount: Int, schedule: [WeekDay]) {
+    init(id: UUID, date: Date, emoji: String, title: String, color: UIColor, dayCount: Int, schedule: [WeekDay]?) {
         self.id = id
         self.date = date
         self.emoji = emoji
-        self.title = text
+        self.title = title
         self.color = color
         self.dayCount = dayCount
         self.schedule = schedule

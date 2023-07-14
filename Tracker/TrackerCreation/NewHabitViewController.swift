@@ -25,6 +25,10 @@ class ButtonTableViewCell: UITableViewCell {
 
 class NewHabitViewController: UIViewController {
     
+    var dataManager = DataManager.shared
+    
+    var schedule = [WeekDay]()
+    
     let navBar = UINavigationBar()
     
     // MARK: - UI ELEMENTS
@@ -103,11 +107,22 @@ class NewHabitViewController: UIViewController {
     @objc func cancelButtonTapped() {
         NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
     }
+
+    // Задаем клик по кнопке "Создать" (создаем трекер)
+    @objc func createButtonTapped() {
+        guard let trackerTitle = trackerNameField.text else { return }
+        let newTracker = Tracker(id: UUID(), date: Date(), emoji: "", title: trackerTitle, color: .ypRed, dayCount: 1, schedule: schedule)
+        dataManager.categories.append(TrackerCategory(title: trackerTitle, trackers: [newTracker]))
+        
+        NotificationCenter.default.post(name: NSNotification.Name("NewTrackerCreated"), object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
+    }
     
     // MARK: - LAYOUT
     
     private func addSubviews() {
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
+        createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         
         trackerNameField.translatesAutoresizingMaskIntoConstraints = false
         buttonTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -188,8 +203,15 @@ extension NewHabitViewController: UITableViewDataSource, UITableViewDelegate {
         // Если вторая кнопка, то открываем расписание
         if indexPath.row == 1 {
             let scheduleVC = ScheduleViewController()
+            scheduleVC.delegate = self
             self.present(scheduleVC, animated: true)
         }
     }
 }
 
+// MARK: - ScheduleDelegate
+extension NewHabitViewController: ScheduleDelegate {
+    func weekDaysChanged(weedDays: [WeekDay]) {
+        self.schedule = weedDays
+    }
+}

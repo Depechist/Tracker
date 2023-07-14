@@ -45,7 +45,7 @@ class TrackersViewController: UIViewController {
     private var completedTrackers: [TrackerRecord] = []
     
     // Заголовки для секций (хедеры)
-    private var sectionTitles = ["Домашний уют", "Радостные мелочи"]
+    var sectionTitles = ["Домашний уют", "Радостные мелочи", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
     
     // MARK: - UI ELEMENTS
     
@@ -116,6 +116,9 @@ class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Устанавливаем фон для экрана
+        view.backgroundColor = .ypWhite
+        
         // Обновляем данные в зависимости от наличия трекеров и даты
         reloadData()
         
@@ -129,8 +132,9 @@ class TrackersViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(closeAllModalViewControllers),
                                                name: Notification.Name("CloseAllModals"), object: nil)
         
-        // Устанавливаем фон для экрана
-        view.backgroundColor = .ypWhite
+        // Создаем Нотификатор для сигнала о создании нового трекера в NewHabitViewController
+        NotificationCenter.default.addObserver(self, selector: #selector(newTrackerCreated), name: NSNotification.Name("NewTrackerCreated"), object: nil)
+        
         
         // Отображаем коллекцию и другие UI элементы
         addSubviews()
@@ -177,6 +181,10 @@ class TrackersViewController: UIViewController {
         dateChanged()
     }
     
+    @objc func newTrackerCreated() {
+        reloadData()
+    }
+    
     // При изменении даты производим фильтрацию массива VisibleCategories по weekday.numberValue
     @objc private func dateChanged() {
 //        updateDateLabelTitle(with: datePicker.date) // Исправляет datePicker при смене даты (альт. datePicker)
@@ -202,9 +210,17 @@ class TrackersViewController: UIViewController {
                 let textCondition = filterText.isEmpty || // Если поле пустое, то отображаем в любом случае
                     tracker.title.lowercased().contains(filterText) // Если не пустое, то сверяем текст из поля с текстом из трекера
                 // Условие по дате в datePicker'е
-                let dateCondition = tracker.schedule?.contains { weekDay in
-                    weekDay.numberValue == filterWeekDay
-                } == true
+                var dateCondition: Bool {
+                    guard !(tracker.schedule ?? []).isEmpty else {
+                        let calendar = Calendar.current
+                        let currentSelectedDay = calendar.dateComponents([.year, .month, .day], from: datePicker.date)
+                        let trackerCreationDate = calendar.dateComponents([.year, .month, .day], from: tracker.date)
+                        return currentSelectedDay == trackerCreationDate
+                    }
+                    return tracker.schedule?.contains { weekDay in
+                        weekDay.numberValue == filterWeekDay
+                    } == true
+                }
                 
                 // Сверяемся с двумя условиями и возвращаем их
                 return textCondition && dateCondition
@@ -295,9 +311,20 @@ extension TrackersViewController: UITextFieldDelegate {
 
 extension TrackersViewController: TrackerCellDelegate {
     func completeTracker(id: UUID, at indexPath: IndexPath) {
-        let trackerRecord = TrackerRecord(trackerId: id, date: datePicker.date)
-        completedTrackers.append(trackerRecord)
-        trackerCollectionView.reloadItems(at: [indexPath])
+        
+        let currentDate = Calendar.current.component(.weekday, from: Date()) // Округляем дату до дня
+        let datePickerDate = Calendar.current.component(.weekday, from: datePicker.date) // Округляем дату в пикере
+        
+        // Храним на этом экране выбранную в календарике дату
+        // И сравниваем тут эти две даты, если выбранная дата больше
+        // Чем текущая, то не вызывать код ниже
+        if currentDate < datePickerDate {
+            return
+        } else {
+            let trackerRecord = TrackerRecord(trackerId: id, date: datePicker.date)
+            completedTrackers.append(trackerRecord)
+            trackerCollectionView.reloadItems(at: [indexPath])
+        }
     }
     
     func uncompleteTracker(id: UUID, at indexPath: IndexPath) {
