@@ -100,14 +100,14 @@ class NewHabitViewController: UIViewController {
     }
     
     // Задаем клик по кнопке "Отменить"
-    @objc func cancelButtonTaped() {
+    @objc func cancelButtonTapped() {
         NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
     }
     
     // MARK: - LAYOUT
     
     private func addSubviews() {
-        cancelButton.addTarget(self, action: #selector(cancelButtonTaped), for: .touchUpInside)
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         
         trackerNameField.translatesAutoresizingMaskIntoConstraints = false
         buttonTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -187,8 +187,8 @@ extension NewHabitViewController: UITableViewDataSource, UITableViewDelegate {
         
         // Если вторая кнопка, то открываем расписание
         if indexPath.row == 1 {
-            let sheduleVC = SheduleViewController()
-            self.present(sheduleVC, animated: true)
+            let scheduleVC = ScheduleViewController()
+            self.present(scheduleVC, animated: true)
         }
     }
 }

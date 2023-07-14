@@ -45,8 +45,8 @@ class AddTrackerViewController: UIViewController {
     }
     
     private func addSubviews() {
-        habitButton.addTarget(self, action: #selector(habitButtonTaped), for: .touchUpInside)
-        eventButton.addTarget(self, action: #selector(eventButtonTaped), for: .touchUpInside)
+        habitButton.addTarget(self, action: #selector(habitButtonTapped), for: .touchUpInside)
+        eventButton.addTarget(self, action: #selector(eventButtonTapped), for: .touchUpInside)
 
         habitButton.translatesAutoresizingMaskIntoConstraints = false
         eventButton.translatesAutoresizingMaskIntoConstraints = false
@@ -66,13 +66,13 @@ class AddTrackerViewController: UIViewController {
         ])
     }
     
-    @objc private func habitButtonTaped() {
+    @objc private func habitButtonTapped() {
         let modalVC = NewHabitViewController()
         modalVC.modalTransitionStyle = .coverVertical
         present(modalVC, animated: true)
     }
     
-    @objc private func eventButtonTaped() {
+    @objc private func eventButtonTapped() {
         let modalVC = NewEventViewController()
         modalVC.modalTransitionStyle = .coverVertical
         present(modalVC, animated: true)

@@ -65,30 +65,6 @@ class TrackersViewController: UIViewController {
         return collectionView
     }()
     
-//    private var dateLabel: UILabel {
-//        let label = UILabel()
-//        label.backgroundColor = .ypBackground
-//        label.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-//        label.textAlignment = .center
-//        label.clipsToBounds = true
-//        label.layer.cornerRadius = 16
-//        label.layer.zPosition = 10
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        return label
-//    }
-//
-//    private var datePicker: UIDatePicker {
-//        let picker = UIDatePicker()
-//        picker.preferredDatePickerStyle = .compact
-//        picker.datePickerMode = .date
-//        picker.locale = Locale(identifier: "ru_Ru")
-//        picker.calendar.firstWeekday = 2
-//        picker.clipsToBounds = true
-//        picker.layer.cornerRadius = 16
-//        picker.translatesAutoresizingMaskIntoConstraints = false
-//        return picker
-//    }
-    
     // Создаем экземпляр DatePicker
     let datePicker: UIDatePicker = {
         let picker = UIDatePicker()
@@ -161,7 +137,7 @@ class TrackersViewController: UIViewController {
         
         // Устанавливаем кнопки в NavigationBar
         if let navBar = navigationController?.navigationBar {
-            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTaped))
+            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
             addButton.tintColor = .ypBlack
             navBar.topItem?.setLeftBarButton(addButton, animated: false)
             
@@ -171,7 +147,7 @@ class TrackersViewController: UIViewController {
     }
     
     // Задаем клик на кнопку + в навбаре
-    @objc func addButtonTaped() {
+    @objc func addButtonTapped() {
         let modalVC = AddTrackerViewController()
         modalVC.modalTransitionStyle = .coverVertical
         present(modalVC, animated: true)
@@ -224,9 +200,9 @@ class TrackersViewController: UIViewController {
             let trackers = category.trackers.filter { tracker in
                 // Условие по тексту в поиске
                 let textCondition = filterText.isEmpty || // Если поле пустое, то отображаем в любом случае
-                    tracker.text.lowercased().contains(filterText) // Если не пустое, то сверяем текст из поля с текстом из трекера
+                    tracker.title.lowercased().contains(filterText) // Если не пустое, то сверяем текст из поля с текстом из трекера
                 // Условие по дате в datePicker'е
-                let dateCondition = tracker.shedule?.contains { weekDay in
+                let dateCondition = tracker.schedule?.contains { weekDay in
                     weekDay.numberValue == filterWeekDay
                 } == true
                 
@@ -251,14 +227,17 @@ class TrackersViewController: UIViewController {
     
     // Отображаем плейсхолдер если трекеров еще нет
     private func reloadPlaceholder() {
-        if !categories.isEmpty {
-            placeholderImage.isHidden = true
-            placeholderLabel.isHidden = true
-        } else if visibleCategories.isEmpty { // TODO: Условие не работает, плейсхолдер не отображается.
-            placeholderImage.isHidden = false
-            placeholderLabel.isHidden = false
-            placeholderLabel.text = "На сегодня задач нет"
-        }
+        if categories.isEmpty {
+                placeholderImage.isHidden = false
+                placeholderLabel.isHidden = false
+            } else if visibleCategories.isEmpty {
+                placeholderImage.isHidden = false
+                placeholderLabel.isHidden = false
+                placeholderLabel.text = "На этот день задач нет"
+            } else {
+                placeholderImage.isHidden = true
+                placeholderLabel.isHidden = true
+            }
     }
     
     // MARK: - UI ELEMENTS LAYOUT

@@ -11,7 +11,7 @@ import UIKit
 
 // MARK: WEEKDAY CELL
 
-class SheduleTableViewCell: UITableViewCell {
+class ScheduleTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.backgroundColor = .ypBackground
@@ -22,7 +22,9 @@ class SheduleTableViewCell: UITableViewCell {
     }
 }
 
-class SheduleViewController: UIViewController {
+class ScheduleViewController: UIViewController {
+    
+    var selectedDays = [WeekDay]()
     
     // MARK: UI ELEMENTS
     
@@ -53,7 +55,7 @@ class SheduleViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
         
-        weekDayTableView.register(SheduleTableViewCell.self, forCellReuseIdentifier: "SheduleTableViewCell")
+        weekDayTableView.register(ScheduleTableViewCell.self, forCellReuseIdentifier: "ScheduleTableViewCell")
         
         navBar.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: 49)
         navBar.barTintColor = .ypWhite
@@ -94,13 +96,13 @@ class SheduleViewController: UIViewController {
 
 // MARK: EXTENSIONS
 
-extension SheduleViewController: UITableViewDataSource, UITableViewDelegate {
+extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 7
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SheduleTableViewCell", for: indexPath) as! SheduleTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTableViewCell", for: indexPath) as! ScheduleTableViewCell
         
         let daysOfWeek = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
         

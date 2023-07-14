@@ -124,7 +124,7 @@ final class TrackerCell: UICollectionViewCell {
     
         upperView.backgroundColor = color
         plusButton.tintColor = color
-        trackerText.text = tracker.text
+        trackerText.text = tracker.title
         emojiLabel.text = tracker.emoji
         
         let wordDay = pluralizeDays(completedDays)
