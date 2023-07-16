@@ -9,7 +9,7 @@
 
 import UIKit
 
-class AddTrackerViewController: UIViewController {
+final class AddTrackerViewController: UIViewController {
     
     private let habitButton: UIButton = {
         let button = UIButton()
@@ -68,14 +68,16 @@ class AddTrackerViewController: UIViewController {
     
     @objc private func habitButtonTapped() {
         let modalVC = NewHabitViewController()
-        modalVC.modalTransitionStyle = .coverVertical
-        present(modalVC, animated: true)
+        let navigationController = UINavigationController(rootViewController: modalVC)
+        navigationController.modalTransitionStyle = .coverVertical
+        present(navigationController, animated: true)
     }
     
     @objc private func eventButtonTapped() {
         let modalVC = NewEventViewController()
-        modalVC.modalTransitionStyle = .coverVertical
-        present(modalVC, animated: true)
+        let navigationController = UINavigationController(rootViewController: modalVC)
+        navigationController.modalTransitionStyle = .coverVertical
+        present(navigationController, animated: true)
     }
     
 }

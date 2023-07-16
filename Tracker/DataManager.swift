@@ -7,7 +7,7 @@
 
 import Foundation
 
-class DataManager {
+final class DataManager {
     
     // Создаем синглтон
     static let shared = DataManager()

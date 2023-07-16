@@ -9,13 +9,11 @@
 
 import UIKit
 
-class NewEventViewController: UIViewController {
+final class NewEventViewController: UIViewController {
     
     var dataManager = DataManager.shared
     
     let currentWeekDay = Calendar.current.component(.weekday, from: Date())
-        
-    let navBar = UINavigationBar()
     
     // MARK: - UI ELEMENTS
     
@@ -74,14 +72,11 @@ class NewEventViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
         
-        // Заголовок модального экрана
-        navBar.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: 49)
-        navBar.barTintColor = .ypWhite
-        navBar.shadowImage = UIImage()
-        navBar.setBackgroundImage(UIImage(), for: .default)
-        view.addSubview(navBar)
-        let navTitle = UINavigationItem(title: "Новое нерегулярное событие")
-        navBar.setItems([navTitle], animated: false)
+        // Объявляем класс делегатом для поля ввода и отключаем кнопку, чтобы избежать отсутсвие названия
+        trackerNameField.delegate = self
+        
+        // Заголовок экрана в навбаре
+        self.title = "Новое нерегулярное событие"
         
         // Добавляем UI элементы
         addSubviews()
@@ -93,7 +88,14 @@ class NewEventViewController: UIViewController {
     }
     
     @objc func createButtonTapped() {
-        guard let trackerTitle = trackerNameField.text else { return }
+        // Проверяем, что поле названия не пустое
+        guard let trackerTitle = trackerNameField.text, !trackerTitle.isEmpty else {
+            let alertController = UIAlertController(title: "Ой!", message: "Введите имя события", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "ОК", style: .default))
+            self.present(alertController, animated: true, completion: nil)
+            return
+        }
+        // Если поле не пустое - создаем трекер
         let newTracker = Tracker(id: UUID(), date: Date(), emoji: "", title: trackerTitle, color: .ypRed, dayCount: 1, schedule: nil)
         dataManager.categories.append(TrackerCategory(title: trackerTitle, trackers: [newTracker]))
         
@@ -121,7 +123,7 @@ class NewEventViewController: UIViewController {
         buttonTableView.delegate = self
         
         NSLayoutConstraint.activate([
-            trackerNameField.topAnchor.constraint(equalTo: navBar.bottomAnchor, constant: 24),
+            trackerNameField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             trackerNameField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             trackerNameField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             trackerNameField.widthAnchor.constraint(equalToConstant: 343),
@@ -146,7 +148,7 @@ class NewEventViewController: UIViewController {
     }
 }
 
-    // MARK: - EXTENSIONS
+// MARK: - EXTENSIONS
 
 extension NewEventViewController: UITableViewDataSource, UITableViewDelegate {
     
@@ -175,4 +177,15 @@ extension NewEventViewController: UITableViewDataSource, UITableViewDelegate {
         return 75
     }
 }
+
+extension NewEventViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        createButton.isEnabled = !updatedText.isEmpty
+        return true
+    }
+}
+
 

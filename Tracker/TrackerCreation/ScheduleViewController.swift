@@ -9,29 +9,16 @@
 
 import UIKit
 
-// MARK: WEEKDAY CELL
-
-class ScheduleTableViewCell: UITableViewCell {
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = .ypBackground
-        self.selectionStyle = .none
-    }
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class ScheduleViewController: UIViewController {
+final class ScheduleViewController: UIViewController {
     
-    var selectedDays = [WeekDay]()
+    private var selectedDays = [WeekDay]()
     weak var delegate: ScheduleDelegate?
     
     // MARK: UI ELEMENTS
     
-    let navBar = UINavigationBar()
+    private let navBar = UINavigationBar()
     
-    let weekDayTableView: UITableView = {
+    private let weekDayTableView: UITableView = {
         let tableView = UITableView()
         tableView.isScrollEnabled = false
         tableView.separatorStyle = .singleLine
@@ -40,7 +27,7 @@ class ScheduleViewController: UIViewController {
         return tableView
     }()
     
-    let doneButton: UIButton = {
+    private let doneButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .ypBlack
         button.setTitle("Готово", for: .normal)
@@ -70,7 +57,7 @@ class ScheduleViewController: UIViewController {
     }
     
     // Отслеживаем и сохраняем в массиве selectedDays отмеченные в расписании дни недели
-    @objc func switchChanged(_ sender: UISwitch) {
+    @objc private func switchChanged(_ sender: UISwitch) {
         if let day = WeekDay(rawValue: sender.tag + 1) {
             if sender.isOn {
                 selectedDays.append(day)
@@ -82,7 +69,7 @@ class ScheduleViewController: UIViewController {
         }
     }
     
-    @objc func doneButtonTapped() {
+    @objc private func doneButtonTapped() {
         delegate?.weekDaysChanged(weedDays: selectedDays)
         self.dismiss(animated: true, completion: nil)
     }
@@ -131,6 +118,7 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17)
         
         let switchView = UISwitch(frame: .zero)
+        switchView.onTintColor = .ypBlue
         switchView.tag = indexPath.row // Важно: сохраняем номер строки как тег
         switchView.addTarget(self, action: #selector(switchChanged), for: .valueChanged)
         cell.accessoryView = switchView

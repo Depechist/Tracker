@@ -5,7 +5,7 @@
 //  Created by Artem Adiev on 02.07.2023.
 //
 
-// MARK: КЛАСС И СТРУКТУРЫ ТРЕКЕРОВ
+// MARK: КЛАСС ЯЧЕЙКИ ТРЕКЕРОВ
 
 import UIKit
 
@@ -32,7 +32,7 @@ final class TrackerCell: UICollectionViewCell {
     // MARK: - UI ELEMENTS
     
     // Верхняя часть ячейки
-    var upperView: UIView = {
+    private var upperView: UIView = {
         let view = UIView()
         view.backgroundColor = .colorSelection14
         view.layer.cornerRadius = 10
@@ -41,7 +41,7 @@ final class TrackerCell: UICollectionViewCell {
     }()
     
     // Нижняя часть ячейки
-    var lowerView: UIView = {
+    private var lowerView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -49,7 +49,7 @@ final class TrackerCell: UICollectionViewCell {
     }()
     
     // Лейбл для эмодзи
-    var emojiLabel: UILabel = {
+    private var emojiLabel: UILabel = {
         let label = UILabel()
         label.text = ""
         label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
@@ -59,7 +59,7 @@ final class TrackerCell: UICollectionViewCell {
     }()
     
     // UIView для эмодзи
-    var emojiBackgroundView: UIView = {
+    private var emojiBackgroundView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.ypWhite.withAlphaComponent(0.3)
         view.layer.cornerRadius = 12
@@ -68,7 +68,7 @@ final class TrackerCell: UICollectionViewCell {
     }()
     
     // Лейбл теста на трекере
-    var trackerText: UITextView = {
+    private var trackerText: UITextView = {
         let text = UITextView()
         text.textColor = .ypWhite
         text.font = UIFont.systemFont(ofSize: 12, weight: .medium)
@@ -81,7 +81,7 @@ final class TrackerCell: UICollectionViewCell {
     }()
     
     // Счетчик дней под трекером
-    var dayCountLabel: UILabel = {
+    private var dayCountLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
@@ -91,7 +91,7 @@ final class TrackerCell: UICollectionViewCell {
     }()
     
     // Кнопка +/- под трекером
-    var plusButton: UIButton = {
+    private var plusButton: UIButton = {
         let button = UIButton()
         let templateImage = UIImage(named: "PlusButton")?.withRenderingMode(.alwaysTemplate)
         button.setImage(templateImage, for: .normal)
@@ -100,16 +100,14 @@ final class TrackerCell: UICollectionViewCell {
     }()
     
     // Картинка для кнопки + под трекером
-    var plusImage: UIImage = {
+    private var plusImage: UIImage = {
         let image = UIImage(named: "PlusButton")?.withRenderingMode(.alwaysTemplate) ?? UIImage()
-//        let image = UIImage(named: "PlusButton") ?? UIImage()
         return image
     }()
     
     // Картинка для кнопки done под трекером
-    var doneImage: UIImage = {
+    private var doneImage: UIImage = {
         let image = UIImage(named: "DoneButton") ?? UIImage()
-//        let image = UIImage(named: "DoneButton") ?? UIImage()
         return image
     }()
     
@@ -149,9 +147,7 @@ final class TrackerCell: UICollectionViewCell {
     
     // Отслеживаем нажатие на кнопку под трекером
     @objc private func plusButtonTapped() {
-        guard let trackerId = trackerId, let indexPath = indexPath else {
-            assertionFailure("No tracker ID")
-            return }
+        guard let trackerId = trackerId, let indexPath = indexPath else { return }
         if isCompletedToday {
             delegate?.uncompleteTracker(id: trackerId, at: indexPath)
         } else {

@@ -9,27 +9,25 @@
 
 import UIKit
 
-    //MARK: - TABLEVIEW BUTTON CELL
+//MARK: - TABLEVIEW BUTTON CELL
 
-class ButtonTableViewCell: UITableViewCell {
+final class ButtonTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.backgroundColor = .ypBackground
         self.selectionStyle = .none
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
 
-class NewHabitViewController: UIViewController {
+final class NewHabitViewController: UIViewController {
     
     var dataManager = DataManager.shared
     
     var schedule = [WeekDay]()
-    
-    let navBar = UINavigationBar()
     
     // MARK: - UI ELEMENTS
     
@@ -90,14 +88,10 @@ class NewHabitViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
         
+        trackerNameField.delegate = self
+        
         // Заголовок модального экрана
-        navBar.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: 49)
-        navBar.barTintColor = .ypWhite
-        navBar.shadowImage = UIImage()
-        navBar.setBackgroundImage(UIImage(), for: .default)
-        view.addSubview(navBar)
-        let navTitle = UINavigationItem(title: "Новая привычка")
-        navBar.setItems([navTitle], animated: false)
+        self.title = "Новая привычка"
         
         // Добавляем UI элементы
         addSubviews()
@@ -107,10 +101,18 @@ class NewHabitViewController: UIViewController {
     @objc func cancelButtonTapped() {
         NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
     }
-
+    
     // Задаем клик по кнопке "Создать" (создаем трекер)
     @objc func createButtonTapped() {
-        guard let trackerTitle = trackerNameField.text else { return }
+        // Проверяем, что поле названия не пустое
+        guard let trackerTitle = trackerNameField.text, !trackerTitle.isEmpty else {
+            let alertController = UIAlertController(title: "Ой!", message: "Введите имя привычки", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "ОК", style: .default))
+            self.present(alertController, animated: true, completion: nil)
+            return
+        }
+        
+        // Если поле не пустое - создаем трекер
         let newTracker = Tracker(id: UUID(), date: Date(), emoji: "", title: trackerTitle, color: .ypRed, dayCount: 1, schedule: schedule)
         dataManager.categories.append(TrackerCategory(title: trackerTitle, trackers: [newTracker]))
         
@@ -138,7 +140,7 @@ class NewHabitViewController: UIViewController {
         buttonTableView.delegate = self
         
         NSLayoutConstraint.activate([
-            trackerNameField.topAnchor.constraint(equalTo: navBar.bottomAnchor, constant: 24),
+            trackerNameField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             trackerNameField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             trackerNameField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             trackerNameField.widthAnchor.constraint(equalToConstant: 343),
@@ -187,7 +189,7 @@ extension NewHabitViewController: UITableViewDataSource, UITableViewDelegate {
             cell.textLabel?.text = "Расписание"
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
         }
-
+        
         return cell
     }
     
@@ -213,5 +215,15 @@ extension NewHabitViewController: UITableViewDataSource, UITableViewDelegate {
 extension NewHabitViewController: ScheduleDelegate {
     func weekDaysChanged(weedDays: [WeekDay]) {
         self.schedule = weedDays
+    }
+}
+
+extension NewHabitViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        createButton.isEnabled = !updatedText.isEmpty
+        return true
     }
 }

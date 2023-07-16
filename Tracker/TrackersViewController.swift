@@ -9,28 +9,10 @@
 
 import UIKit
 
-// Создаем класс для заголовка секции
-class SectionHeader: UICollectionReusableView {
-    var titleLabel: UILabel!
+final class TrackersViewController: UIViewController {
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        titleLabel = UILabel()
-        titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .bold)
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(titleLabel)
-        
-        NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 28),
-            titleLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor)
-        ])
-    }
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class TrackersViewController: UIViewController {
+    // Храним выбранную в пикере дату
+    var currentDate: Date = Date()
     
     // Объявляем синглтон с моковыми данными
     private let dataManager = DataManager.shared
@@ -45,12 +27,12 @@ class TrackersViewController: UIViewController {
     private var completedTrackers: [TrackerRecord] = []
     
     // Заголовки для секций (хедеры)
-    var sectionTitles = ["Домашний уют", "Радостные мелочи", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+    private var sectionTitles = ["Домашний уют", "Радостные мелочи", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
     
     // MARK: - UI ELEMENTS
     
     // Создаем экземпляр коллекции
-    var trackerCollectionView: UICollectionView = {
+    private var trackerCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.backgroundColor = .clear
         
@@ -66,7 +48,7 @@ class TrackersViewController: UIViewController {
     }()
     
     // Создаем экземпляр DatePicker
-    let datePicker: UIDatePicker = {
+    private let datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
@@ -151,14 +133,14 @@ class TrackersViewController: UIViewController {
     }
     
     // Задаем клик на кнопку + в навбаре
-    @objc func addButtonTapped() {
+    @objc private func addButtonTapped() {
         let modalVC = AddTrackerViewController()
         modalVC.modalTransitionStyle = .coverVertical
         present(modalVC, animated: true)
     }
     
     // Задаем закрытие всех модальных экранов в случае отмены создания трекера
-    @objc func closeAllModalViewControllers() {
+    @objc private func closeAllModalViewControllers() {
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -181,13 +163,13 @@ class TrackersViewController: UIViewController {
         dateChanged()
     }
     
-    @objc func newTrackerCreated() {
+    @objc private func newTrackerCreated() {
         reloadData()
     }
     
     // При изменении даты производим фильтрацию массива VisibleCategories по weekday.numberValue
     @objc private func dateChanged() {
-//        updateDateLabelTitle(with: datePicker.date) // Исправляет datePicker при смене даты (альт. datePicker)
+        currentDate = datePicker.date
         reloadVisibleCategories()
     }
     
@@ -199,26 +181,28 @@ class TrackersViewController: UIViewController {
     // по weekDay.numberValue и searchTextField
     private func reloadVisibleCategories() {
         let calendar = Calendar.current
-        let filterWeekDay = calendar.component(.weekday, from: datePicker.date)
+        let filterWeekDay = calendar.component(.weekday, from: currentDate)
         let filterText = (searchTextField.text ?? "").lowercased() // Уходим от зависимости от регистра и переводим в lowercased
         
         // Для исправления бага с отображением заголовка для пустой секции...
         // ...Пользуемся методом compactMap, который как бы "проглатывает малое внутри себя"
         visibleCategories = categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
+                
                 // Условие по тексту в поиске
                 let textCondition = filterText.isEmpty || // Если поле пустое, то отображаем в любом случае
                     tracker.title.lowercased().contains(filterText) // Если не пустое, то сверяем текст из поля с текстом из трекера
+                
                 // Условие по дате в datePicker'е
                 var dateCondition: Bool {
                     guard !(tracker.schedule ?? []).isEmpty else {
                         let calendar = Calendar.current
-                        let currentSelectedDay = calendar.dateComponents([.year, .month, .day], from: datePicker.date)
+                        let currentSelectedDay = calendar.dateComponents([.year, .month, .day], from: currentDate)
                         let trackerCreationDate = calendar.dateComponents([.year, .month, .day], from: tracker.date)
                         return currentSelectedDay == trackerCreationDate
                     }
                     return tracker.schedule?.contains { weekDay in
-                        weekDay.numberValue == filterWeekDay
+                        weekDay.rawValue == filterWeekDay
                     } == true
                 }
                 
@@ -312,13 +296,17 @@ extension TrackersViewController: UITextFieldDelegate {
 extension TrackersViewController: TrackerCellDelegate {
     func completeTracker(id: UUID, at indexPath: IndexPath) {
         
-        let currentDate = Calendar.current.component(.weekday, from: Date()) // Округляем дату до дня
-        let datePickerDate = Calendar.current.component(.weekday, from: datePicker.date) // Округляем дату в пикере
+        // Сравниваем две даты напрямую без учета времени
+        let currentDate = Calendar.current.startOfDay(for: Date()) // Текущая дата
+        let datePickerDate = Calendar.current.startOfDay(for: datePicker.date) // Дата из пикера
         
         // Храним на этом экране выбранную в календарике дату
         // И сравниваем тут эти две даты, если выбранная дата больше
         // Чем текущая, то не вызывать код ниже
         if currentDate < datePickerDate {
+            let alertController = UIAlertController(title: "Ой! Мы в будущем", message: "Невозможно отметить этой датой", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "ОК", style: .default))
+            self.present(alertController, animated: true, completion: nil)
             return
         } else {
             let trackerRecord = TrackerRecord(trackerId: id, date: datePicker.date)
