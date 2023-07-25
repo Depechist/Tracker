@@ -66,40 +66,11 @@ final class NewHabitViewController: UIViewController {
         return tableView
     }()
     
-//    let emojiCollectionView = EmojiCollectionView()
+    // Коллекция эмодзи
+    private var emojiCollectionView: EmojiCollectionView!
     
-    // CollectionView для выбора эмодзи
-    let emojiCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
-        collectionView.backgroundColor = .clear
-        collectionView.allowsMultipleSelection = false
-        collectionView.isScrollEnabled = false
-        
-        collectionView.register(SectionHeader.self,
-                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                withReuseIdentifier: "header")
-        
-        return collectionView
-    }()
-    
-    // CollectionView для выбора цвета
-    let colorCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "colorCell")
-        collectionView.backgroundColor = .clear
-        collectionView.allowsMultipleSelection = false
-        collectionView.isScrollEnabled = false
-        
-        collectionView.register(SectionHeader.self,
-                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                withReuseIdentifier: "header")
-        
-        return collectionView
-    }()
-    
+    // Коллекция цветов
+    private var colorCollectionView: ColorCollectionView!
     
     // Кнопка "Отменить"
     let cancelButton: UIButton = {
@@ -127,6 +98,7 @@ final class NewHabitViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.backgroundColor = .ypWhite
         
         trackerNameField.delegate = self
@@ -164,6 +136,10 @@ final class NewHabitViewController: UIViewController {
     // MARK: - LAYOUT
     
     private func addSubviews() {
+        let layout = UICollectionViewFlowLayout()
+        emojiCollectionView = EmojiCollectionView(frame: .zero, collectionViewLayout: layout)
+        colorCollectionView = ColorCollectionView(frame: .zero, collectionViewLayout: layout)
+        
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         
@@ -190,12 +166,6 @@ final class NewHabitViewController: UIViewController {
         buttonTableView.dataSource = self
         buttonTableView.delegate = self
         
-        emojiCollectionView.dataSource = self
-        emojiCollectionView.delegate = self
-        
-        colorCollectionView.dataSource = self
-        colorCollectionView.delegate = self
-        
         NSLayoutConstraint.activate([
             // ScrollView
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -219,13 +189,13 @@ final class NewHabitViewController: UIViewController {
             emojiCollectionView.topAnchor.constraint(equalTo: buttonTableView.bottomAnchor, constant: 16),
             emojiCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             emojiCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            emojiCollectionView.heightAnchor.constraint(equalToConstant: view.frame.width / 2), // Предполагая, что вы хотите половину высоты экрана под эмодзи
+            emojiCollectionView.heightAnchor.constraint(equalToConstant: view.frame.width / 2),
             
             // Коллекция цветов
             colorCollectionView.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 16),
             colorCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             colorCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            colorCollectionView.heightAnchor.constraint(equalToConstant: view.frame.width / 2), // Предполагая, что вы хотите половину высоты экрана под цвета
+            colorCollectionView.heightAnchor.constraint(equalToConstant: view.frame.width / 2),
             colorCollectionView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor, constant: -40),
             
             // Кнопка Отмена
@@ -289,92 +259,6 @@ extension NewHabitViewController: UITableViewDataSource, UITableViewDelegate {
         }
     }
 }
-
-extension NewHabitViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == self.emojiCollectionView {
-            return dataManager.emojis.count
-        } else {
-            return dataManager.colors.count
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == self.emojiCollectionView {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "emojiCell", for: indexPath) as! EmojiCell
-            cell.emojiLabel.text = dataManager.emojis[indexPath.row]
-            return cell
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "colorCell", for: indexPath) as! ColorCell
-            cell.backgroundColor = dataManager.colors[indexPath.row]
-            return cell
-        }
-    }
-
-    // Задаем отступы для всей секции
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        UIEdgeInsets(top: 0.0, left: 18.0, bottom: 0.0, right: 18.0)
-    }
-
-    // Высота заголовка
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: 50) // Высота хедера
-    }
-
-    // Отображаем заголовки на экране
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        switch kind {
-        case UICollectionView.elementKindSectionHeader:
-            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind,
-                                                                             withReuseIdentifier: "header",
-                                                                             for: indexPath) as! SectionHeader
-            // Устанавливаем заголовок для каждой секции
-            if collectionView == self.emojiCollectionView {
-                headerView.titleLabel.text = "Emoji"
-                return headerView
-            } else {
-                headerView.titleLabel.text = "Цвет"
-                return headerView
-            }
-
-        default:
-            assert(false, "Invalid element type for SupplementaryElement")
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 52, height: 52)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 5
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView == self.emojiCollectionView {
-            let cell = collectionView.cellForItem(at: indexPath)
-            cell?.backgroundColor = .lightGray
-        } else {
-            let cell = collectionView.cellForItem(at: indexPath)
-            cell?.layer.borderColor = UIColor.black.cgColor
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        if collectionView == self.emojiCollectionView {
-            let cell = collectionView.cellForItem(at: indexPath)
-            cell?.backgroundColor = .clear
-        } else {
-            let cell = collectionView.cellForItem(at: indexPath)
-            cell?.layer.borderColor = UIColor.clear.cgColor
-        }
-    }
-}
-
 
 // MARK: - ScheduleDelegate
 extension NewHabitViewController: ScheduleDelegate {

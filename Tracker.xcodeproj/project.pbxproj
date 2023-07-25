@@ -15,6 +15,7 @@
 		8A6E427A2A5C5E7B00CE2D0B /* TrackerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6E42792A5C5E7B00CE2D0B /* TrackerModel.swift */; };
 		8A7476442A6FDE2800056CE9 /* EmojiCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7476432A6FDE2800056CE9 /* EmojiCollectionView.swift */; };
 		8A7476462A6FDE3600056CE9 /* ColorCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7476452A6FDE3600056CE9 /* ColorCollectionView.swift */; };
+		8A7476482A701BC500056CE9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A7476472A701BC500056CE9 /* Main.storyboard */; };
 		8A7CEA512A3B36DC005007D2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CEA502A3B36DC005007D2 /* AppDelegate.swift */; };
 		8A7CEA532A3B36DC005007D2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CEA522A3B36DC005007D2 /* SceneDelegate.swift */; };
 		8A7CEA552A3B36DC005007D2 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CEA542A3B36DC005007D2 /* TrackersViewController.swift */; };
@@ -24,11 +25,10 @@
 		8A9DB7762A63D136001896CB /* TrackerRecordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9DB7752A63D136001896CB /* TrackerRecordModel.swift */; };
 		8A9DB7782A63D148001896CB /* WeekDayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9DB7772A63D148001896CB /* WeekDayModel.swift */; };
 		8A9DB77A2A63DE3F001896CB /* SectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9DB7792A63DE3F001896CB /* SectionHeader.swift */; };
-		8A9DB77C2A63E0B6001896CB /* ScheduleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9DB77B2A63E0B6001896CB /* ScheduleTableViewCell.swift */; };
+		8A9DB77C2A63E0B6001896CB /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9DB77B2A63E0B6001896CB /* ScheduleCell.swift */; };
 		8AAE717D2A6027E10042AE3E /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAE717C2A6027E10042AE3E /* DataManager.swift */; };
 		8AD0FCD62A6D4457003ED206 /* EmojiCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0FCD52A6D4457003ED206 /* EmojiCell.swift */; };
 		8AD0FCD82A6D4462003ED206 /* ColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0FCD72A6D4462003ED206 /* ColorCell.swift */; };
-		8AD589472A6013DC007C01BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AD589462A6013DC007C01BF /* Main.storyboard */; };
 		8AFF34892A583CFA00074DDE /* NewEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFF34882A583CFA00074DDE /* NewEventViewController.swift */; };
 		8AFF348B2A58565000074DDE /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFF348A2A58565000074DDE /* ScheduleViewController.swift */; };
 		AD350B8F2A61889400945F0A /* ScheduleDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD350B8E2A61889400945F0A /* ScheduleDelegate.swift */; };
@@ -43,6 +43,7 @@
 		8A6E42792A5C5E7B00CE2D0B /* TrackerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerModel.swift; sourceTree = "<group>"; };
 		8A7476432A6FDE2800056CE9 /* EmojiCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCollectionView.swift; sourceTree = "<group>"; };
 		8A7476452A6FDE3600056CE9 /* ColorCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCollectionView.swift; sourceTree = "<group>"; };
+		8A7476472A701BC500056CE9 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		8A7CEA4D2A3B36DC005007D2 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A7CEA502A3B36DC005007D2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8A7CEA522A3B36DC005007D2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -54,11 +55,10 @@
 		8A9DB7752A63D136001896CB /* TrackerRecordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordModel.swift; sourceTree = "<group>"; };
 		8A9DB7772A63D148001896CB /* WeekDayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDayModel.swift; sourceTree = "<group>"; };
 		8A9DB7792A63DE3F001896CB /* SectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeader.swift; sourceTree = "<group>"; };
-		8A9DB77B2A63E0B6001896CB /* ScheduleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTableViewCell.swift; sourceTree = "<group>"; };
+		8A9DB77B2A63E0B6001896CB /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		8AAE717C2A6027E10042AE3E /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		8AD0FCD52A6D4457003ED206 /* EmojiCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCell.swift; sourceTree = "<group>"; };
 		8AD0FCD72A6D4462003ED206 /* ColorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCell.swift; sourceTree = "<group>"; };
-		8AD589462A6013DC007C01BF /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		8AFF34882A583CFA00074DDE /* NewEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEventViewController.swift; sourceTree = "<group>"; };
 		8AFF348A2A58565000074DDE /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		AD350B8E2A61889400945F0A /* ScheduleDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleDelegate.swift; sourceTree = "<group>"; };
@@ -113,7 +113,7 @@
 				8A4F23552A518797009DE378 /* StatsViewController.swift */,
 				8A3923152A5157E100DA2752 /* Helpers */,
 				8A7CEA592A3B36DE005007D2 /* Assets.xcassets */,
-				8AD589462A6013DC007C01BF /* Main.storyboard */,
+				8A7476472A701BC500056CE9 /* Main.storyboard */,
 				8A7CEA5B2A3B36DE005007D2 /* LaunchScreen.storyboard */,
 				8A7CEA5E2A3B36DE005007D2 /* Info.plist */,
 				AD350B8E2A61889400945F0A /* ScheduleDelegate.swift */,
@@ -139,7 +139,7 @@
 				8A64000E2A55CA260067E893 /* NewHabitViewController.swift */,
 				8AFF34882A583CFA00074DDE /* NewEventViewController.swift */,
 				8AFF348A2A58565000074DDE /* ScheduleViewController.swift */,
-				8A9DB77B2A63E0B6001896CB /* ScheduleTableViewCell.swift */,
+				8A9DB77B2A63E0B6001896CB /* ScheduleCell.swift */,
 				8A7476432A6FDE2800056CE9 /* EmojiCollectionView.swift */,
 				8AD0FCD52A6D4457003ED206 /* EmojiCell.swift */,
 				8A7476452A6FDE3600056CE9 /* ColorCollectionView.swift */,
@@ -206,7 +206,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8AD589472A6013DC007C01BF /* Main.storyboard in Resources */,
+				8A7476482A701BC500056CE9 /* Main.storyboard in Resources */,
 				8A7CEA5D2A3B36DE005007D2 /* LaunchScreen.storyboard in Resources */,
 				8A7CEA5A2A3B36DE005007D2 /* Assets.xcassets in Resources */,
 			);
@@ -228,7 +228,7 @@
 				8AFF34892A583CFA00074DDE /* NewEventViewController.swift in Sources */,
 				8A64000D2A55B9300067E893 /* AddTrackerViewController.swift in Sources */,
 				8A7476462A6FDE3600056CE9 /* ColorCollectionView.swift in Sources */,
-				8A9DB77C2A63E0B6001896CB /* ScheduleTableViewCell.swift in Sources */,
+				8A9DB77C2A63E0B6001896CB /* ScheduleCell.swift in Sources */,
 				8A9DB7782A63D148001896CB /* WeekDayModel.swift in Sources */,
 				8A4F23562A518797009DE378 /* StatsViewController.swift in Sources */,
 				8A64000F2A55CA260067E893 /* NewHabitViewController.swift in Sources */,
@@ -384,7 +384,6 @@
 				INFOPLIST_FILE = Tracker/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -416,7 +415,6 @@
 				INFOPLIST_FILE = Tracker/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
