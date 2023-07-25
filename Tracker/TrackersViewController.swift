@@ -358,10 +358,6 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
 }
 
-//extension TrackersViewController: UICollectionViewDelegate {
-//
-//}
-
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     
     // Задаем размер каждого элемента (ячейки) в коллекции
