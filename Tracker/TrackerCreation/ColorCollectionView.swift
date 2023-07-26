@@ -12,6 +12,7 @@ import UIKit
 final class ColorCollectionView: UICollectionView {
     
     var dataManager = DataManager.shared
+    var selectedColor: UIColor?
     
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
@@ -94,5 +95,10 @@ extension ColorCollectionView: UICollectionViewDelegateFlowLayout {
     // Устанавливаем минимальное расстояние между строками
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as! ColorCell
+        selectedColor = cell.innerView.backgroundColor
     }
 }

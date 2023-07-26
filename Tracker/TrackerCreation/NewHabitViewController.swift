@@ -26,7 +26,6 @@ final class ButtonTableViewCell: UITableViewCell {
 final class NewHabitViewController: UIViewController {
     
     var dataManager = DataManager.shared
-    
     var schedule = [WeekDay]()
     
     // MARK: - UI ELEMENTS
@@ -118,17 +117,28 @@ final class NewHabitViewController: UIViewController {
     // Задаем клик по кнопке "Создать" (создаем трекер)
     @objc func createButtonTapped() {
         // Проверяем, что поле названия не пустое
-        guard let trackerTitle = trackerNameField.text, !trackerTitle.isEmpty else {
-            let alertController = UIAlertController(title: "Ой!", message: "Введите имя привычки", preferredStyle: .alert)
+        guard let trackerTitle = trackerNameField.text,
+              let selectedEmoji = emojiCollectionView.selectedEmoji,
+              let selectedColor = colorCollectionView.selectedColor,
+              !trackerTitle.isEmpty else {
+            let alertController = UIAlertController(title: "Ой!", message: "Выберите все поля", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "ОК", style: .default))
             self.present(alertController, animated: true, completion: nil)
             return
         }
         
         // Если поле не пустое - создаем трекер
-        let newTracker = Tracker(id: UUID(), date: Date(), emoji: "", title: trackerTitle, color: .ypRed, dayCount: 1, schedule: schedule)
+        let newTracker = Tracker(id: UUID(),
+                                 date: Date(),
+                                 emoji: selectedEmoji,
+                                 title: trackerTitle,
+                                 color: selectedColor,
+                                 dayCount: 1,
+                                 schedule: schedule)
+        // Добавляем новый трекер в базу
         dataManager.categories.append(TrackerCategory(title: trackerTitle, trackers: [newTracker]))
         
+        // Сообщаем, что трекер создан и экраны можно закрывать
         NotificationCenter.default.post(name: NSNotification.Name("NewTrackerCreated"), object: nil)
         NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
     }

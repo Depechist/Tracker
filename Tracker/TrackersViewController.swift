@@ -124,6 +124,7 @@ final class TrackersViewController: UIViewController {
         // Устанавливаем кнопки в NavigationBar
         if let navBar = navigationController?.navigationBar {
             let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+            addButton.style = .done
             addButton.tintColor = .ypBlack
             navBar.topItem?.setLeftBarButton(addButton, animated: false)
             
@@ -304,7 +305,7 @@ extension TrackersViewController: TrackerCellDelegate {
         // И сравниваем тут эти две даты, если выбранная дата больше
         // Чем текущая, то не вызывать код ниже
         if currentDate < datePickerDate {
-            let alertController = UIAlertController(title: "Ой! Мы в будущем", message: "Невозможно отметить этой датой", preferredStyle: .alert)
+            let alertController = UIAlertController(title: "Ой, мы в будущем!", message: "Невозможно отметить этой датой", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "ОК", style: .default))
             self.present(alertController, animated: true, completion: nil)
             return
