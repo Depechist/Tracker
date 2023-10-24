@@ -11,8 +11,9 @@ import UIKit
 
 final class NewEventViewController: UIViewController {
     
-    var dataManager = DataManager.shared
-    
+    private let dataManager = DataManager.shared
+    private let trackerStore = TrackerStore()
+
     let currentWeekDay = Calendar.current.component(.weekday, from: Date())
     
     // MARK: - UI ELEMENTS
@@ -119,12 +120,15 @@ final class NewEventViewController: UIViewController {
                                  color: selectedColor,
                                  dayCount: 1,
                                  schedule: nil)
-        // Добавляем новый трекер в базу
-        dataManager.categories.append(TrackerCategory(title: trackerTitle, trackers: [newTracker]))
         
-        // Сообщаем, что трекер создан и экраны можно закрывать
-        NotificationCenter.default.post(name: NSNotification.Name("NewTrackerCreated"), object: nil)
-        NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
+        // Добавляем новый трекер в базу
+        do {
+            try trackerStore.addNewTracker(newTracker)
+            // Сообщаем, что экраны можно закрывать
+            NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
+        } catch let error {
+            print(error)
+        }
     }
     
     // MARK: - LAYOUT

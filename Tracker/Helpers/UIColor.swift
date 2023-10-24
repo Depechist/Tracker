@@ -74,5 +74,36 @@ extension UIColor {
     static var colorSelection16: UIColor { UIColor(named: "Color selection 16")! }
     static var colorSelection17: UIColor { UIColor(named: "Color selection 17")! }
     static var colorSelection18: UIColor { UIColor(named: "Color selection 18")! }
-
+    
+    func hexString() -> String {
+        let components = self.cgColor.components
+        let r: CGFloat = components?[0] ?? 0.0
+        let g: CGFloat = components?[1] ?? 0.0
+        let b: CGFloat = components?[2] ?? 0.0
+        return String.init(
+            format: "%02lX%02lX%02lX",
+            lroundf(Float(r * 255)),
+            lroundf(Float(g * 255)),
+            lroundf(Float(b * 255))
+        )
+    }
+    
+    static func color(from hex: String?) -> UIColor? {
+        guard let hex else { return nil }
+        var rgbValue: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&rgbValue)
+        return UIColor(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+                       green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+                       blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+                       alpha: CGFloat(1.0))
+    }
+            
+    static func from(data: Data?) -> UIColor? {
+        guard let data else { return nil }
+        return try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: data)
+    }
+    
+    func encode() -> Data? {
+        try? NSKeyedArchiver.archivedData(withRootObject: self, requiringSecureCoding: false)
+    }
 }

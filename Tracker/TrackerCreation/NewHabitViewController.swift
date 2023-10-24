@@ -25,8 +25,9 @@ final class ButtonTableViewCell: UITableViewCell {
 
 final class NewHabitViewController: UIViewController {
     
-    var dataManager = DataManager.shared
-    var schedule = [WeekDay]()
+    private let dataManager = DataManager.shared
+    private let trackerStore = TrackerStore()
+    private var schedule = [WeekDay]()
     
     // MARK: - UI ELEMENTS
     
@@ -135,12 +136,15 @@ final class NewHabitViewController: UIViewController {
                                  color: selectedColor,
                                  dayCount: 1,
                                  schedule: schedule)
-        // Добавляем новый трекер в базу
-        dataManager.categories.append(TrackerCategory(title: trackerTitle, trackers: [newTracker]))
         
-        // Сообщаем, что трекер создан и экраны можно закрывать
-        NotificationCenter.default.post(name: NSNotification.Name("NewTrackerCreated"), object: nil)
-        NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
+        // Добавляем новый трекер в базу
+        do {
+            try trackerStore.addNewTracker(newTracker)
+            // Сообщаем, что экраны можно закрывать
+            NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
+        } catch let error {
+            print(error)
+        }
     }
     
     // MARK: - LAYOUT
