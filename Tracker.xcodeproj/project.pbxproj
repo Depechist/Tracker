@@ -29,6 +29,7 @@
 		8A9DB77A2A63DE3F001896CB /* SectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9DB7792A63DE3F001896CB /* SectionHeader.swift */; };
 		8A9DB77C2A63E0B6001896CB /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9DB77B2A63E0B6001896CB /* ScheduleCell.swift */; };
 		8AAE717D2A6027E10042AE3E /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAE717C2A6027E10042AE3E /* DataManager.swift */; };
+		8ABE272F2AE966B700304149 /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE272E2AE966B700304149 /* OnboardingPageViewController.swift */; };
 		8AD0FCD62A6D4457003ED206 /* EmojiCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0FCD52A6D4457003ED206 /* EmojiCell.swift */; };
 		8AD0FCD82A6D4462003ED206 /* ColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0FCD72A6D4462003ED206 /* ColorCell.swift */; };
 		8AFF34892A583CFA00074DDE /* NewEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFF34882A583CFA00074DDE /* NewEventViewController.swift */; };
@@ -63,6 +64,7 @@
 		8A9DB7792A63DE3F001896CB /* SectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeader.swift; sourceTree = "<group>"; };
 		8A9DB77B2A63E0B6001896CB /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		8AAE717C2A6027E10042AE3E /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		8ABE272E2AE966B700304149 /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
 		8AD0FCD52A6D4457003ED206 /* EmojiCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCell.swift; sourceTree = "<group>"; };
 		8AD0FCD72A6D4462003ED206 /* ColorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCell.swift; sourceTree = "<group>"; };
 		8AFF34882A583CFA00074DDE /* NewEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEventViewController.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 				8A4F23572A519914009DE378 /* TrackerCell.swift */,
 				8A9DB7792A63DE3F001896CB /* SectionHeader.swift */,
 				8A4F23552A518797009DE378 /* StatsViewController.swift */,
+				8ABE27302AE966C000304149 /* Onboarding */,
 				8AFF348C2A58565B00074DDE /* TrackerCreation */,
 				8A9DB7742A63D109001896CB /* Models */,
 				8A70EB182A71713D002E6409 /* CoreData */,
@@ -150,6 +153,14 @@
 				8A9DB7772A63D148001896CB /* WeekDayModel.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		8ABE27302AE966C000304149 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				8ABE272E2AE966B700304149 /* OnboardingPageViewController.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 		8AFF348C2A58565B00074DDE /* TrackerCreation */ = {
@@ -264,6 +275,7 @@
 				AD350B8F2A61889400945F0A /* ScheduleDelegate.swift in Sources */,
 				8A7476442A6FDE2800056CE9 /* EmojiCollectionView.swift in Sources */,
 				8A9DB7762A63D136001896CB /* TrackerRecordModel.swift in Sources */,
+				8ABE272F2AE966B700304149 /* OnboardingPageViewController.swift in Sources */,
 				8AFF348B2A58565000074DDE /* ScheduleViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
