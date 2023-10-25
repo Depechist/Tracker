@@ -11,11 +11,18 @@ import UIKit
 
 final class NewEventViewController: UIViewController {
     
-    var dataManager = DataManager.shared
-    
+    private let dataManager = DataManager.shared
+    private let trackerStore = TrackerStore()
+
     let currentWeekDay = Calendar.current.component(.weekday, from: Date())
     
     // MARK: - UI ELEMENTS
+    
+    // ScrollView для экрана
+    let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        return scrollView
+    }()
     
     // Поле для ввода названия трекера
     let trackerNameField: UITextField = {
@@ -43,6 +50,12 @@ final class NewEventViewController: UIViewController {
         tableView.isScrollEnabled = false
         return tableView
     }()
+    
+    // Коллекция эмодзи
+    private var emojiCollectionView: EmojiCollectionView!
+    
+    // Коллекция цветов
+    private var colorCollectionView: ColorCollectionView!
     
     // Кнопка "Отменить"
     let cancelButton: UIButton = {
@@ -87,63 +100,114 @@ final class NewEventViewController: UIViewController {
         NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
     }
     
+    // Задаем клик по кнопке "Создать" (создаем трекер)
     @objc func createButtonTapped() {
         // Проверяем, что поле названия не пустое
-        guard let trackerTitle = trackerNameField.text, !trackerTitle.isEmpty else {
-            let alertController = UIAlertController(title: "Ой!", message: "Введите имя события", preferredStyle: .alert)
+        guard let trackerTitle = trackerNameField.text,
+              let selectedEmoji = emojiCollectionView.selectedEmoji,
+              let selectedColor = colorCollectionView.selectedColor,
+                !trackerTitle.isEmpty else {
+            let alertController = UIAlertController(title: "Ой!", message: "Выберите все поля", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "ОК", style: .default))
             self.present(alertController, animated: true, completion: nil)
             return
         }
         // Если поле не пустое - создаем трекер
-        let newTracker = Tracker(id: UUID(), date: Date(), emoji: "", title: trackerTitle, color: .ypRed, dayCount: 1, schedule: nil)
-        dataManager.categories.append(TrackerCategory(title: trackerTitle, trackers: [newTracker]))
+        let newTracker = Tracker(id: UUID(),
+                                 date: Date(),
+                                 emoji: selectedEmoji,
+                                 title: trackerTitle,
+                                 color: selectedColor,
+                                 dayCount: 1,
+                                 schedule: nil)
         
-        NotificationCenter.default.post(name: NSNotification.Name("NewTrackerCreated"), object: nil)
-        NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
+        // Добавляем новый трекер в базу
+        do {
+            try trackerStore.addNewTracker(newTracker)
+            // Сообщаем, что экраны можно закрывать
+            NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
+        } catch let error {
+            print(error)
+        }
     }
     
     // MARK: - LAYOUT
     
     private func addSubviews() {
+        let layout = UICollectionViewFlowLayout()
+        emojiCollectionView = EmojiCollectionView(frame: .zero, collectionViewLayout: layout)
+        colorCollectionView = ColorCollectionView(frame: .zero, collectionViewLayout: layout)
+        
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         
+        emojiCollectionView.register(EmojiCell.self, forCellWithReuseIdentifier: "emojiCell")
+        colorCollectionView.register(ColorCell.self, forCellWithReuseIdentifier: "colorCell")
+        
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
         trackerNameField.translatesAutoresizingMaskIntoConstraints = false
         buttonTableView.translatesAutoresizingMaskIntoConstraints = false
+        emojiCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        colorCollectionView.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         createButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(trackerNameField)
-        view.addSubview(buttonTableView)
-        view.addSubview(cancelButton)
-        view.addSubview(createButton)
+        
+        view.addSubview(scrollView)
+        scrollView.addSubview(trackerNameField)
+        scrollView.addSubview(buttonTableView)
+        scrollView.addSubview(emojiCollectionView)
+        scrollView.addSubview(colorCollectionView)
+        scrollView.addSubview(cancelButton)
+        scrollView.addSubview(createButton)
         
         // Ставим делегата и датасоурс для TableView
         buttonTableView.dataSource = self
         buttonTableView.delegate = self
         
         NSLayoutConstraint.activate([
-            trackerNameField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            // ScrollView
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            // Имя трекера
+            trackerNameField.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 24),
             trackerNameField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             trackerNameField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            trackerNameField.widthAnchor.constraint(equalToConstant: 343),
             trackerNameField.heightAnchor.constraint(equalToConstant: 75),
             
+            // Кнопки Категория / Расписание
             buttonTableView.topAnchor.constraint(equalTo: trackerNameField.bottomAnchor, constant: 24),
             buttonTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             buttonTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            buttonTableView.widthAnchor.constraint(equalToConstant: 343),
-            buttonTableView.heightAnchor.constraint(equalToConstant: 150),
+            buttonTableView.heightAnchor.constraint(equalToConstant: 75),
             
+            // Коллекция эмодзи
+            emojiCollectionView.topAnchor.constraint(equalTo: buttonTableView.bottomAnchor, constant: 16),
+            emojiCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            emojiCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            emojiCollectionView.heightAnchor.constraint(equalToConstant: view.frame.width / 2),
+            
+            // Коллекция цветов
+            colorCollectionView.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 16),
+            colorCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            colorCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            colorCollectionView.heightAnchor.constraint(equalToConstant: view.frame.width / 2),
+            colorCollectionView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor, constant: -40),
+            
+            // Кнопка Отмена
+            cancelButton.topAnchor.constraint(equalTo: colorCollectionView.bottomAnchor, constant: 16),
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            cancelButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             cancelButton.widthAnchor.constraint(equalToConstant: 166),
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
             
+            // Кнопка Создать
             createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            createButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -20),
             createButton.centerYAnchor.constraint(equalTo: cancelButton.centerYAnchor),
             createButton.widthAnchor.constraint(equalToConstant: 166),
-            createButton.heightAnchor.constraint(equalToConstant: 60)
+            createButton.heightAnchor.constraint(equalToConstant: 60),
         ])
     }
 }

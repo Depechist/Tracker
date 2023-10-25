@@ -17,17 +17,15 @@ final class TrackersViewController: UIViewController {
     // Объявляем синглтон с моковыми данными
     private let dataManager = DataManager.shared
     
-    // Массив со всеми созданными трекерами
-    private var categories: [TrackerCategory] = []
-    
+    private let trackerStore = TrackerStore()
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private var trackerRecordStore = TrackerRecordStore()
+
     // Массив с видимыми на экране трекерами
     private var visibleCategories: [TrackerCategory] = []
     
     // Хранилище записей завершенных трекеров
     private var completedTrackers: [TrackerRecord] = []
-    
-    // Заголовки для секций (хедеры)
-    private var sectionTitles = ["Домашний уют", "Радостные мелочи", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
     
     // MARK: - UI ELEMENTS
     
@@ -52,8 +50,8 @@ final class TrackersViewController: UIViewController {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
+        picker.locale = Locale.current
         picker.calendar.firstWeekday = 2
-
         return picker
     }()
     
@@ -114,22 +112,23 @@ final class TrackersViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(closeAllModalViewControllers),
                                                name: Notification.Name("CloseAllModals"), object: nil)
         
-        // Создаем Нотификатор для сигнала о создании нового трекера в NewHabitViewController
-        NotificationCenter.default.addObserver(self, selector: #selector(newTrackerCreated), name: NSNotification.Name("NewTrackerCreated"), object: nil)
-        
-        
         // Отображаем коллекцию и другие UI элементы
         addSubviews()
         
         // Устанавливаем кнопки в NavigationBar
         if let navBar = navigationController?.navigationBar {
             let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+            addButton.style = .done
             addButton.tintColor = .ypBlack
             navBar.topItem?.setLeftBarButton(addButton, animated: false)
             
             let datePickerButton = UIBarButtonItem(customView: datePicker)
             navBar.topItem?.setRightBarButton(datePickerButton, animated: false)
         }
+        
+        trackerStore.delegate = self
+        trackerRecordStore.delegate = self
+        completedTrackers = trackerRecordStore.trackerRecords
     }
     
     // Задаем клик на кнопку + в навбаре
@@ -159,7 +158,6 @@ final class TrackersViewController: UIViewController {
     }
     
     private func reloadData() {
-        categories = dataManager.categories
         dateChanged()
     }
     
@@ -186,8 +184,10 @@ final class TrackersViewController: UIViewController {
         
         // Для исправления бага с отображением заголовка для пустой секции...
         // ...Пользуемся методом compactMap, который как бы "проглатывает малое внутри себя"
-        visibleCategories = categories.compactMap { category in
-            let trackers = category.trackers.filter { tracker in
+        let categories = trackerCategoryStore.trackerCategories
+        visibleCategories = categories.compactMap { category -> TrackerCategory? in
+            let categoryTrackers = category.trackers
+            let trackers = categoryTrackers.filter { tracker in
                 
                 // Условие по тексту в поиске
                 let textCondition = filterText.isEmpty || // Если поле пустое, то отображаем в любом случае
@@ -216,7 +216,7 @@ final class TrackersViewController: UIViewController {
             }
             
             return TrackerCategory(
-                title: category.title,
+                header: category.header,
                 trackers: trackers
             )
         }
@@ -227,7 +227,7 @@ final class TrackersViewController: UIViewController {
     
     // Отображаем плейсхолдер если трекеров еще нет
     private func reloadPlaceholder() {
-        if categories.isEmpty {
+        if trackerCategoryStore.trackerCategories.isEmpty {
                 placeholderImage.isHidden = false
                 placeholderLabel.isHidden = false
             } else if visibleCategories.isEmpty {
@@ -304,22 +304,22 @@ extension TrackersViewController: TrackerCellDelegate {
         // И сравниваем тут эти две даты, если выбранная дата больше
         // Чем текущая, то не вызывать код ниже
         if currentDate < datePickerDate {
-            let alertController = UIAlertController(title: "Ой! Мы в будущем", message: "Невозможно отметить этой датой", preferredStyle: .alert)
+            let alertController = UIAlertController(title: "Ой, мы в будущем!", message: "Невозможно отметить этой датой", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "ОК", style: .default))
             self.present(alertController, animated: true, completion: nil)
             return
         } else {
             let trackerRecord = TrackerRecord(trackerId: id, date: datePicker.date)
-            completedTrackers.append(trackerRecord)
-            trackerCollectionView.reloadItems(at: [indexPath])
+            try? trackerRecordStore.addNewTrackerRecord(trackerRecord)
         }
     }
     
     func uncompleteTracker(id: UUID, at indexPath: IndexPath) {
-        completedTrackers.removeAll { trackerRecord in
-            isSameTrackerRecord(trackerRecord: trackerRecord, id: id)
+        completedTrackers.forEach {
+            if isSameTrackerRecord(trackerRecord: $0, id: id) {
+                try? trackerRecordStore.removeTrackerRecord($0)
+            }
         }
-        trackerCollectionView.reloadItems(at: [indexPath])
     }
 }
 
@@ -357,10 +357,6 @@ extension TrackersViewController: UICollectionViewDataSource {
         return cell
     }
 }
-
-//extension TrackersViewController: UICollectionViewDelegate {
-//
-//}
 
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     
@@ -401,7 +397,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
                                                                              withReuseIdentifier: "header",
                                                                              for: indexPath) as! SectionHeader
             // Устанавливаем заголовок для каждой секции
-            headerView.titleLabel.text = sectionTitles[indexPath.section]
+            headerView.titleLabel.text = visibleCategories[indexPath.section].header
             return headerView
         default:
             assert(false, "Invalid element type for SupplementaryElement")
@@ -409,3 +405,17 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+// MARK: - TrackerStoreDelegate
+extension TrackersViewController: TrackerStoreDelegate {
+    func storeDidUpdate(_ store: TrackerStore) {
+        reloadData()
+    }
+}
+
+// MARK: - TrackerRecordStoreDelegate
+extension TrackersViewController: TrackerRecordStoreDelegate {
+    func storeRecordsDidUpdate(_ store: TrackerRecordStore) {
+        completedTrackers = store.trackerRecords
+        reloadData()
+    }
+}
