@@ -126,7 +126,7 @@ final class TrackersViewController: UIViewController {
             navBar.topItem?.setRightBarButton(datePickerButton, animated: false)
         }
         
-        trackerStore.delegate = self
+        trackerCategoryStore.delegate = self
         trackerRecordStore.delegate = self
         completedTrackers = trackerRecordStore.trackerRecords
     }
@@ -405,9 +405,9 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-// MARK: - TrackerStoreDelegate
-extension TrackersViewController: TrackerStoreDelegate {
-    func storeDidUpdate(_ store: TrackerStore) {
+// MARK: - TrackerCategoryStoreDelegate
+extension TrackersViewController: TrackerCategoryStoreDelegate {
+    func storeCategoriesDidUpdate(_ store: TrackerCategoryStore) {
         reloadData()
     }
 }
@@ -419,3 +419,5 @@ extension TrackersViewController: TrackerRecordStoreDelegate {
         reloadData()
     }
 }
+
+

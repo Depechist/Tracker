@@ -13,6 +13,8 @@ final class NewEventViewController: UIViewController {
     
     private let dataManager = DataManager.shared
     private let trackerStore = TrackerStore()
+    private let categoryStore = TrackerCategoryStore()
+    private var selectedCategory: TrackerCategory?
 
     let currentWeekDay = Calendar.current.component(.weekday, from: Date())
     
@@ -124,6 +126,7 @@ final class NewEventViewController: UIViewController {
         // Добавляем новый трекер в базу
         do {
             try trackerStore.addNewTracker(newTracker)
+            try categoryStore.addTrackerToCategory(to: selectedCategory, tracker: newTracker)
             // Сообщаем, что экраны можно закрывать
             NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
         } catch let error {
@@ -231,14 +234,24 @@ extension NewEventViewController: UITableViewDataSource, UITableViewDelegate {
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17)
         
         cell.layer.cornerRadius = 16
-        cell.textLabel?.text = "Категория"
-        
+        cell.configure(with: "Категория", subtitle: selectedCategory?.header)
+
         return cell
     }
     
     // Высота для каждой ячейки
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let addCategoryViewController = CategoryViewController()
+        addCategoryViewController.viewModel.$selectedCategory.bind { [weak self] category in
+            self?.selectedCategory = category
+            self?.buttonTableView.reloadData()
+        }
+        buttonTableView.deselectRow(at: indexPath, animated: true)
+        present(addCategoryViewController, animated: true, completion: nil)
     }
 }
 

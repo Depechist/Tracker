@@ -2,7 +2,7 @@
 //  ScheduleDelegate.swift
 //  Tracker
 //
-//  Created by Dmitry Rogov on 14.07.2023.
+//  Created by Artem Adiev on 14.07.2023.
 //
 
 import Foundation

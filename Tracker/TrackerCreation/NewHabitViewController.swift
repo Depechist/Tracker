@@ -12,14 +12,51 @@ import UIKit
 //MARK: - TABLEVIEW BUTTON CELL
 
 final class ButtonTableViewCell: UITableViewCell {
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        label.numberOfLines = 2
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = .ypBackground
-        self.selectionStyle = .none
+        
+        backgroundColor = .ypBackground
+        clipsToBounds = true
+        
+        addSubview(titleLabel)
+        
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configure(with title: String, subtitle: String?) {
+        let attributedText = NSMutableAttributedString(string: title)
+
+        guard let subtitle else {
+            attributedText.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(title.startIndex..<title.endIndex, in: title))
+            titleLabel.attributedText = attributedText
+            return
+        }
+
+        // Create attributed strings with the desired attributes
+        let attrTitle = NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.black])
+        let attrSubtitle = NSAttributedString(string: "\n\(subtitle)", attributes: [.foregroundColor: UIColor.ypGray])
+
+        // Combine the two attributed strings
+        let combinedAttributedString = NSMutableAttributedString()
+        combinedAttributedString.append(attrTitle)
+        combinedAttributedString.append(attrSubtitle)
+        
+        titleLabel.attributedText = combinedAttributedString
     }
 }
 
@@ -27,8 +64,10 @@ final class NewHabitViewController: UIViewController {
     
     private let dataManager = DataManager.shared
     private let trackerStore = TrackerStore()
+    private let categoryStore = TrackerCategoryStore()
     private var schedule = [WeekDay]()
-    
+    private var selectedCategory: TrackerCategory?
+
     // MARK: - UI ELEMENTS
     
     // ScrollView для экрана
@@ -121,6 +160,7 @@ final class NewHabitViewController: UIViewController {
         guard let trackerTitle = trackerNameField.text,
               let selectedEmoji = emojiCollectionView.selectedEmoji,
               let selectedColor = colorCollectionView.selectedColor,
+              let currentCategory = selectedCategory,
               !trackerTitle.isEmpty else {
             let alertController = UIAlertController(title: "Ой!", message: "Выберите все поля", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "ОК", style: .default))
@@ -140,6 +180,7 @@ final class NewHabitViewController: UIViewController {
         // Добавляем новый трекер в базу
         do {
             try trackerStore.addNewTracker(newTracker)
+            try categoryStore.addTrackerToCategory(to: selectedCategory, tracker: newTracker)
             // Сообщаем, что экраны можно закрывать
             NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
         } catch let error {
@@ -247,7 +288,7 @@ extension NewHabitViewController: UITableViewDataSource, UITableViewDelegate {
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17)
         
         if indexPath.row == 0 {
-            cell.textLabel?.text = "Категория"
+            cell.configure(with: "Категория", subtitle: selectedCategory?.header)
         } else {
             cell.textLabel?.text = "Расписание"
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
@@ -265,11 +306,20 @@ extension NewHabitViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        // Если первая кнопка, то открываем выбор категории
+        if indexPath.row == 0 {
+            let addCategoryViewController = CategoryViewController()
+            addCategoryViewController.viewModel.$selectedCategory.bind { [weak self] category in
+                self?.selectedCategory = category
+                self?.buttonTableView.reloadData()
+            }
+            present(addCategoryViewController, animated: true, completion: nil)
+        }
         // Если вторая кнопка, то открываем расписание
-        if indexPath.row == 1 {
+        else if indexPath.row == 1 {
             let scheduleVC = ScheduleViewController()
             scheduleVC.delegate = self
-            self.present(scheduleVC, animated: true)
+            present(scheduleVC, animated: true)
         }
     }
 }

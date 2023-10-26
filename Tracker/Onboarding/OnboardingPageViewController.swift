@@ -9,8 +9,6 @@ import UIKit
 
 final class OnboardingPageViewController: UIPageViewController {
     
-    // MARK: - Properties
-    
     // Массив страниц Онбординга
     private var pages: [UIViewController] = []
     
@@ -52,7 +50,7 @@ final class OnboardingPageViewController: UIPageViewController {
         setupConstraints()         // Задаем констрейнты для элементов
     }
     
-    // MARK: - Setup Functions
+    // MARK: - Setup UI
     
     // Настройка индикатора текущей страницы
     private func configurePageControl(_ pageControl: UIPageControl) {

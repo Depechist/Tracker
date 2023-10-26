@@ -61,20 +61,6 @@ final class TrackerStore: NSObject {
         trackerCoreData.schedule = tracker.schedule?.map {
             $0.rawValue
         }
-        
-        try context.save()
-    }
-    
-    func updateTracker(_ tracker: Tracker, oldTracker: Tracker?) throws {
-        let updated = try fetchTracker(with: oldTracker)
-        guard let updated = updated else { return }
-        updated.title = tracker.title
-        
-        updated.color = tracker.color.hexString()
-        updated.emoji = tracker.emoji
-        updated.schedule = tracker.schedule?.map {
-            $0.rawValue
-        }
         try context.save()
     }
     
