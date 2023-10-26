@@ -9,6 +9,9 @@ import UIKit
 
 final class OnboardingPageViewController: UIPageViewController {
     
+    // Создаем ключ для хранения значения была ли кнопка Онбординга нажата
+    static let onboardingCompletedKey = "onboardingCompleted"
+    
     // Массив страниц Онбординга
     private var pages: [UIViewController] = []
     
@@ -31,7 +34,9 @@ final class OnboardingPageViewController: UIPageViewController {
     // MARK: - Initializers
     
     // Настройка переходов между страницами
-    override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
+    override init(transitionStyle style: UIPageViewController.TransitionStyle, 
+                  navigationOrientation: UIPageViewController.NavigationOrientation,
+                  options: [UIPageViewController.OptionsKey : Any]? = nil) {
         super.init(transitionStyle: .scroll, navigationOrientation: navigationOrientation)
     }
     
@@ -45,8 +50,8 @@ final class OnboardingPageViewController: UIPageViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupPageViewController()  // Настраиваем Контроллер
         setupOnboardingPages()     // Создаем страницы Онбординга
+        setupPageViewControl()  // Настраиваем Контроллер
         setupConstraints()         // Задаем констрейнты для элементов
     }
     
@@ -73,7 +78,7 @@ final class OnboardingPageViewController: UIPageViewController {
     }
     
     // Устанавливаем элементы на странице
-    private func setupPageViewController() {
+    private func setupPageViewControl() {
         dataSource = self
         delegate = self
         view.addSubview(pageControl)
@@ -81,7 +86,7 @@ final class OnboardingPageViewController: UIPageViewController {
     }
     
     // Создаем стоковую страницу Онбординга с изображением и текстом
-    func createOnboardingPage(imageName: String, labelText: String) -> UIViewController {
+    private func createOnboardingPage(imageName: String, labelText: String) -> UIViewController {
         let onboardingVC = UIViewController()
         
         let imageView = UIImageView(image: UIImage(named: imageName))
@@ -136,6 +141,10 @@ final class OnboardingPageViewController: UIPageViewController {
     
     // По нажатию кнопки собираем экран Трекеров и переходим туда
     @objc private func buttonTapped() {
+        
+        // Сохраняем знание о том, что Онбординг просмотрен
+        UserDefaults.standard.set(true, forKey: OnboardingPageViewController.onboardingCompletedKey)
+        
         // Создаем и добавляем экран Трекеров в TabBar
         let trackersViewController = TrackersViewController()
         trackersViewController.tabBarItem.image = UIImage(named: "TabBarTrackersIcon")

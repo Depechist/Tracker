@@ -18,30 +18,39 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Создаем новое окно сцены (экрана)
         let window = UIWindow(windowScene: scene)
         
-        // Создаем экран Онбординга
-        let onboardingVC = OnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        // Определяем просмотрен ли Онбординг
+        let onboardingCompleted = UserDefaults.standard.bool(forKey: OnboardingPageViewController.onboardingCompletedKey)
         
-//        // Создаем и добавляем экран Трекеров в TabBar
-//        let trackersViewController = TrackersViewController()
-//        trackersViewController.tabBarItem.image = UIImage(named: "TabBarTrackersIcon")
-//        trackersViewController.tabBarItem.title = "Трекеры"
-//        
-//        // Создаем и добавляем экран Статистики в TabBar
-//        let statsViewController = StatsViewController()
-//        statsViewController.tabBarItem.image = UIImage(named: "TabBarStatsIcon")
-//        statsViewController.tabBarItem.title = "Статистика"
-//        
-//        // Оборачиваем его в NavigationController
-//        let trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
-//        
-//        // Создаем экземпляр TapBarController
-//        let tabBarController = UITabBarController()
-//        
-//        // Добавляем контроллер навигации в TapBarController
-//        tabBarController.viewControllers = [trackersNavigationController, statsViewController]
-        
-        // Устанавливаем tapBarController корневым (основным) экраном для окна
-        window.rootViewController = onboardingVC
+        if !onboardingCompleted {
+            
+            // Создаем экран Онбординга
+            let onboardingVC = OnboardingPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+            
+            // Показываем экран Онбординга
+            window.rootViewController = onboardingVC
+        } else {
+            // Создаем и добавляем экран Трекеров в TabBar
+            let trackersViewController = TrackersViewController()
+            trackersViewController.tabBarItem.image = UIImage(named: "TabBarTrackersIcon")
+            trackersViewController.tabBarItem.title = "Трекеры"
+            
+            // Создаем и добавляем экран Статистики в TabBar
+            let statsViewController = StatsViewController()
+            statsViewController.tabBarItem.image = UIImage(named: "TabBarStatsIcon")
+            statsViewController.tabBarItem.title = "Статистика"
+            
+            // Оборачиваем его в NavigationController
+            let trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
+            
+            // Создаем экземпляр TapBarController
+            let tabBarController = UITabBarController()
+            
+            // Добавляем контроллер навигации в TapBarController
+            tabBarController.viewControllers = [trackersNavigationController, statsViewController]
+            
+            // Устанавливаем tapBarController корневым (основным) экраном для окна
+            window.rootViewController = tabBarController
+        }
                 
         // Запоминаем окно и делаем его видимым
         self.window = window
