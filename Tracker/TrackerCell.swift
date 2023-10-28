@@ -147,6 +147,8 @@ final class TrackerCell: UICollectionViewCell {
     
     // Отслеживаем нажатие на кнопку под трекером
     @objc private func plusButtonTapped() {
+        Analytics.shared.tapButton(on: "Main", itemType: .track)
+        
         guard let trackerId = trackerId, let indexPath = indexPath else { return }
         if isCompletedToday {
             delegate?.uncompleteTracker(id: trackerId, at: indexPath)

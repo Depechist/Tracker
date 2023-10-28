@@ -133,6 +133,8 @@ final class TrackersViewController: UIViewController {
     
     // Задаем клик на кнопку + в навбаре
     @objc private func addButtonTapped() {
+        Analytics.shared.tapButton(on: "Main", itemType: .addTrack)
+        
         let modalVC = AddTrackerViewController()
         modalVC.modalTransitionStyle = .coverVertical
         present(modalVC, animated: true)
