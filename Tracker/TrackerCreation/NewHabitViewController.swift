@@ -42,13 +42,13 @@ final class ButtonTableViewCell: UITableViewCell {
         let attributedText = NSMutableAttributedString(string: title)
 
         guard let subtitle else {
-            attributedText.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(title.startIndex..<title.endIndex, in: title))
+            attributedText.addAttribute(.foregroundColor, value: UIColor.ypBlack, range: NSRange(title.startIndex..<title.endIndex, in: title))
             titleLabel.attributedText = attributedText
             return
         }
 
         // Create attributed strings with the desired attributes
-        let attrTitle = NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.black])
+        let attrTitle = NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.ypBlack])
         let attrSubtitle = NSAttributedString(string: "\n\(subtitle)", attributes: [.foregroundColor: UIColor.ypGray])
 
         // Combine the two attributed strings

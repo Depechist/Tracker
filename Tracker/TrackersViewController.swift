@@ -25,7 +25,7 @@ final class TrackersViewController: UIViewController {
     private var visibleCategories: [TrackerCategory] = []
     
     // Хранилище записей завершенных трекеров
-    private var completedTrackers: [TrackerRecord] = []
+    var completedTrackers: [TrackerRecord] = []
     
     // MARK: - UI ELEMENTS
     

@@ -151,7 +151,7 @@ final class OnboardingPageViewController: UIPageViewController {
         trackersViewController.tabBarItem.title = "Трекеры"
         
         // Создаем и добавляем экран Статистики в TabBar
-        let statsViewController = StatsViewController()
+        let statsViewController = StatisticViewController()
         statsViewController.tabBarItem.image = UIImage(named: "TabBarStatsIcon")
         statsViewController.tabBarItem.title = "Статистика"
         

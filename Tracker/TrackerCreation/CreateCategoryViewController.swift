@@ -23,7 +23,7 @@ final class CreateCategoryViewController: UIViewController {
         header.translatesAutoresizingMaskIntoConstraints = false
         header.text = "Новая категория"
         header.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        header.textColor = .black
+        header.textColor = .ypBlack
         return header
     }()
     
@@ -47,7 +47,7 @@ final class CreateCategoryViewController: UIViewController {
     private lazy var doneButton: UIButton = {
         let doneButton = UIButton(type: .custom)
         doneButton.setTitle("Готово", for: .normal)
-        doneButton.setTitleColor(.white, for: .normal)
+        doneButton.setTitleColor(.ypWhite, for: .normal)
         doneButton.backgroundColor = .ypGray
         doneButton.layer.cornerRadius = 16
         doneButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -62,7 +62,7 @@ final class CreateCategoryViewController: UIViewController {
         
         addCategoryName.delegate = self
         
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
         
         setupSubviews()
     }
@@ -110,7 +110,7 @@ extension CreateCategoryViewController: UITextFieldDelegate {
             doneButton.backgroundColor = .ypGray
         } else {
             doneButton.isEnabled = true
-            doneButton.backgroundColor = .black
+            doneButton.backgroundColor = .ypBlack
         }
     }
     

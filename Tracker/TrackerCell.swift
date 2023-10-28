@@ -43,7 +43,7 @@ final class TrackerCell: UICollectionViewCell {
     // Нижняя часть ячейки
     private var lowerView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -83,7 +83,7 @@ final class TrackerCell: UICollectionViewCell {
     // Счетчик дней под трекером
     private var dayCountLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.translatesAutoresizingMaskIntoConstraints = false
         
