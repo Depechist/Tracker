@@ -36,9 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         guard let configuration = YMMYandexMetricaConfiguration(apiKey: "6bdabe7d-ab09-44b8-b3ac-6b6b5dfe1bab") else { // используем ключ API
             return true
         }
-
         YMMYandexMetrica.activate(with: configuration)
-        
         Analytics.shared.openScreen(name: "Main")
         
         return true

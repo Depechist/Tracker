@@ -20,7 +20,7 @@ final class TrackersViewController: UIViewController {
     private let trackerStore = TrackerStore()
     private let trackerCategoryStore = TrackerCategoryStore()
     private var trackerRecordStore = TrackerRecordStore()
-
+    
     // Массив с видимыми на экране трекерами
     private var visibleCategories: [TrackerCategory] = []
     
@@ -76,19 +76,42 @@ final class TrackersViewController: UIViewController {
     }()
     
     // Создаем картинку-заглушку для пустой коллекции
-    private lazy var placeholderImage: UIImageView = {
+    private lazy var emptyCollectionImage: UIImageView = {
         let image = UIImage(named: "EmptyCollectionIcon")
         let emptyCollectionIcon = UIImageView(image: image)
         return emptyCollectionIcon
     }()
     
     // Подпись под картинкой-заглушкой
-    private lazy var placeholderLabel: UILabel = {
+    private lazy var emptyCollectionText: UILabel = {
         let label = UILabel()
         label.text = "Что будем отслеживать?"
         label.textColor = .ypBlack
         label.font = UIFont.systemFont(ofSize: 12)
         return label
+    }()
+    
+    private let emptySearchImage: UIImageView = {
+        let image = UIImage(named: "EmptySearchIcon")
+        let emptySearchIcon = UIImageView(image: image)
+        return emptySearchIcon
+    }()
+    
+    private let emptySearchText: UILabel = {
+        let emptySearchText = UILabel()
+        emptySearchText.text = "Ничего не найдено"
+        emptySearchText.textColor = .ypBlack
+        emptySearchText.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        return emptySearchText
+    }()
+    
+    private lazy var filtersButton: UIButton = {
+        let filtersButton = UIButton()
+        filtersButton.layer.cornerRadius = 16
+        filtersButton.backgroundColor = .ypBlue
+        filtersButton.setTitle("Фильтры", for: .normal)
+        //            filtersButton.addTarget(self, action: #selector(filtersButtonTapped), for: .touchUpInside)
+        return filtersButton
     }()
     
     // MARK: - LIFECYCLE
@@ -114,7 +137,7 @@ final class TrackersViewController: UIViewController {
         
         // Отображаем коллекцию и другие UI элементы
         addSubviews()
-        
+                
         // Устанавливаем кнопки в NavigationBar
         if let navBar = navigationController?.navigationBar {
             let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
@@ -193,7 +216,7 @@ final class TrackersViewController: UIViewController {
                 
                 // Условие по тексту в поиске
                 let textCondition = filterText.isEmpty || // Если поле пустое, то отображаем в любом случае
-                    tracker.title.lowercased().contains(filterText) // Если не пустое, то сверяем текст из поля с текстом из трекера
+                tracker.title.lowercased().contains(filterText) // Если не пустое, то сверяем текст из поля с текстом из трекера
                 
                 // Условие по дате в datePicker'е
                 var dateCondition: Bool {
@@ -227,19 +250,21 @@ final class TrackersViewController: UIViewController {
         reloadPlaceholder()
     }
     
+    // TODO: Дописать логику под отображение emptySearchImage и emptySearchText в случае пустого поиска
+    
     // Отображаем плейсхолдер если трекеров еще нет
     private func reloadPlaceholder() {
         if trackerCategoryStore.trackerCategories.isEmpty {
-                placeholderImage.isHidden = false
-                placeholderLabel.isHidden = false
-            } else if visibleCategories.isEmpty {
-                placeholderImage.isHidden = false
-                placeholderLabel.isHidden = false
-                placeholderLabel.text = "На этот день задач нет"
-            } else {
-                placeholderImage.isHidden = true
-                placeholderLabel.isHidden = true
-            }
+            emptyCollectionImage.isHidden = false
+            emptyCollectionText.isHidden = false
+        } else if visibleCategories.isEmpty {
+            emptyCollectionImage.isHidden = false
+            emptyCollectionText.isHidden = false
+            emptyCollectionText.text = "На этот день задач нет"
+        } else {
+            emptyCollectionImage.isHidden = true
+            emptyCollectionText.isHidden = true
+        }
     }
     
     // MARK: - UI ELEMENTS LAYOUT
@@ -247,14 +272,24 @@ final class TrackersViewController: UIViewController {
     private func addSubviews() {
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         searchTextField.translatesAutoresizingMaskIntoConstraints = false
-        placeholderImage.translatesAutoresizingMaskIntoConstraints = false
-        placeholderLabel.translatesAutoresizingMaskIntoConstraints = false
+        emptyCollectionImage.translatesAutoresizingMaskIntoConstraints = false
+        emptyCollectionText.translatesAutoresizingMaskIntoConstraints = false
+        emptySearchImage.translatesAutoresizingMaskIntoConstraints = false
+        emptySearchText.translatesAutoresizingMaskIntoConstraints = false
         trackerCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        filtersButton.translatesAutoresizingMaskIntoConstraints = false
+        
         view.addSubview(mainLabel)
         view.addSubview(searchTextField)
         view.addSubview(trackerCollectionView)
-        view.addSubview(placeholderImage)
-        view.addSubview(placeholderLabel)
+        view.addSubview(emptyCollectionImage)
+        view.addSubview(emptyCollectionText)
+        view.addSubview(emptySearchImage)
+        view.addSubview(emptySearchText)
+        view.addSubview(filtersButton)
+        
+        emptySearchImage.isHidden = true
+        emptySearchText.isHidden = true
         
         // Задаем делегата и датасоурс для коллекции
         trackerCollectionView.dataSource = self
@@ -267,15 +302,27 @@ final class TrackersViewController: UIViewController {
             searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-            placeholderImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            placeholderImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            placeholderLabel.topAnchor.constraint(equalTo: placeholderImage.bottomAnchor, constant: 8),
-            placeholderLabel.centerXAnchor.constraint(equalTo: placeholderImage.centerXAnchor),
+            emptyCollectionImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyCollectionImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyCollectionText.topAnchor.constraint(equalTo: emptyCollectionImage.bottomAnchor, constant: 8),
+            emptyCollectionText.centerXAnchor.constraint(equalTo: emptyCollectionImage.centerXAnchor),
+            
+            emptySearchImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptySearchImage.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 220),
+            emptySearchImage.heightAnchor.constraint(equalToConstant: 80),
+            emptySearchImage.widthAnchor.constraint(equalToConstant: 80),
+            emptySearchText.centerXAnchor.constraint(equalTo: emptySearchImage.centerXAnchor),
+            emptySearchText.topAnchor.constraint(equalTo: emptySearchImage.bottomAnchor, constant: 8),
             
             trackerCollectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10),
-            trackerCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            trackerCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             trackerCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            trackerCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            trackerCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            filtersButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 130),
+            filtersButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -130),
+            filtersButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
+            filtersButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
 }

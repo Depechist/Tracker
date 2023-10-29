@@ -44,6 +44,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             
             // Создаем экземпляр TapBarController
             let tabBarController = UITabBarController()
+            let separatorImage = UIImage()
+            tabBarController.tabBar.barTintColor = .ypBlack
+            tabBarController.tabBar.shadowImage = separatorImage
+            tabBarController.tabBar.backgroundImage = separatorImage
+            tabBarController.tabBar.layer.borderWidth = 0.50
+            tabBarController.tabBar.clipsToBounds = true
             
             // Добавляем контроллер навигации в TapBarController
             tabBarController.viewControllers = [trackersNavigationController, statsViewController]
