@@ -50,6 +50,8 @@ final class OnboardingPageViewController: UIPageViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.overrideUserInterfaceStyle = .light
+        
         setupOnboardingPages()     // Создаем страницы Онбординга
         setupPageViewControl()  // Настраиваем Контроллер
         setupConstraints()         // Задаем констрейнты для элементов

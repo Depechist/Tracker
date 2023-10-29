@@ -12,7 +12,11 @@ import UIKit
 final class StatisticViewController: UIViewController {
     
     let cellReuseIdentifier = "StatisticViewController"
-    var trackersViewController: TrackersViewController?
+    
+    // Хранилище трекеров
+    var trackerStore = TrackerStore.shared
+    // Хранилище выполненных трекеров
+    var trackerRecordStore = TrackerRecordStore.shared
     
     // MARK: - UI Elements
     
@@ -44,6 +48,8 @@ final class StatisticViewController: UIViewController {
         let statisticTableView = UITableView()
         statisticTableView.separatorStyle = .none
         statisticTableView.layer.cornerRadius = 16
+        statisticTableView.backgroundColor = .clear
+        statisticTableView.isScrollEnabled = false
         statisticTableView.translatesAutoresizingMaskIntoConstraints = false
         return statisticTableView
     }()
@@ -98,15 +104,11 @@ final class StatisticViewController: UIViewController {
             statisticTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             statisticTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             statisticTableView.heightAnchor.constraint(equalToConstant: 500)
-            
         ])
     }
     
     private func reloadPlaceholder() {
-        print("trackersViewController: \(trackersViewController)")
-        guard let trackersViewController = trackersViewController else { return }
-        
-        if trackersViewController.completedTrackers.count > 0 {
+        if trackerStore.trackers.count > 0 {
             placeholderImage.isHidden = true
             placeholderLabel.isHidden = true
             statisticTableView.isHidden = false
@@ -165,7 +167,7 @@ extension StatisticViewController: UITableViewDataSource {
         case 1:
             count = "0"
         case 2:
-            count = "\(trackersViewController?.completedTrackers.count ?? 0)"
+            count = "\(trackerRecordStore.trackerRecords.count ?? 0)"
         case 3:
             count = "0"
         default:
