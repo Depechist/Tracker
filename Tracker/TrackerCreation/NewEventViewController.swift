@@ -108,6 +108,7 @@ final class NewEventViewController: UIViewController {
         guard let trackerTitle = trackerNameField.text,
               let selectedEmoji = emojiCollectionView.selectedEmoji,
               let selectedColor = colorCollectionView.selectedColor,
+              let currentCategory = selectedCategory,
                 !trackerTitle.isEmpty else {
             let alertController = UIAlertController(title: "Ой!", message: "Выберите все поля", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "ОК", style: .default))
@@ -120,6 +121,7 @@ final class NewEventViewController: UIViewController {
                                  emoji: selectedEmoji,
                                  title: trackerTitle,
                                  color: selectedColor,
+                                 isPinned: false,
                                  dayCount: 1,
                                  schedule: nil)
         

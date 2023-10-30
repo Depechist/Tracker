@@ -101,4 +101,14 @@ extension ColorCollectionView: UICollectionViewDelegateFlowLayout {
         let cell = collectionView.cellForItem(at: indexPath) as! ColorCell
         selectedColor = cell.innerView.backgroundColor
     }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        let color = dataManager.colors[indexPath.row]
+        let isSelected = color.hexString() == selectedColor?.hexString()
+        if isSelected {
+            collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .bottom)
+            cell.contentView.layer.borderColor = isSelected ? color.cgColor.copy(alpha: 0.3) : UIColor.clear.cgColor
+        }
+    }
 }

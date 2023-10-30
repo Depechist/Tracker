@@ -17,8 +17,8 @@ final class TrackersViewController: UIViewController {
     // Объявляем синглтон с моковыми данными
     private let dataManager = DataManager.shared
     
-    private let trackerStore = TrackerStore()
-    private let trackerCategoryStore = TrackerCategoryStore()
+    let trackerStore = TrackerStore()
+    let trackerCategoryStore = TrackerCategoryStore()
     private var trackerRecordStore = TrackerRecordStore()
     
     // Массив с видимыми на экране трекерами
@@ -110,7 +110,7 @@ final class TrackersViewController: UIViewController {
         filtersButton.layer.cornerRadius = 16
         filtersButton.backgroundColor = .ypBlue
         filtersButton.setTitle("Фильтры", for: .normal)
-        //            filtersButton.addTarget(self, action: #selector(filtersButtonTapped), for: .touchUpInside)
+        filtersButton.addTarget(self, action: #selector(filtersButtonTapped), for: .touchUpInside)
         return filtersButton
     }()
     
@@ -137,7 +137,7 @@ final class TrackersViewController: UIViewController {
         
         // Отображаем коллекцию и другие UI элементы
         addSubviews()
-                
+        
         // Устанавливаем кнопки в NavigationBar
         if let navBar = navigationController?.navigationBar {
             let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
@@ -156,11 +156,16 @@ final class TrackersViewController: UIViewController {
     
     // Задаем клик на кнопку + в навбаре
     @objc private func addButtonTapped() {
-        Analytics.shared.tapButton(on: "Main", itemType: .addTrack)
+        Analytics.shared.tapButton(on: .main, itemType: .addTrack)
         
         let modalVC = AddTrackerViewController()
         modalVC.modalTransitionStyle = .coverVertical
         present(modalVC, animated: true)
+    }
+    
+    // Отслеживаем клик по кнопке Фильтры в Метрике
+    @objc private func filtersButtonTapped() {
+        Analytics.shared.tapButton(on: .main, itemType: .filter)
     }
     
     // Задаем закрытие всех модальных экранов в случае отмены создания трекера
@@ -182,7 +187,7 @@ final class TrackersViewController: UIViewController {
         return trackerRecord.trackerId == id && isSameDay
     }
     
-    private func reloadData() {
+    func reloadData() {
         dateChanged()
     }
     
@@ -232,7 +237,7 @@ final class TrackersViewController: UIViewController {
                 }
                 
                 // Сверяемся с двумя условиями и возвращаем их
-                return textCondition && dateCondition
+                return textCondition && dateCondition && !tracker.isPinned
             }
             
             // ...А также если категория пуста - пропускаем ее
@@ -245,25 +250,43 @@ final class TrackersViewController: UIViewController {
                 trackers: trackers
             )
         }
+        
+        let pinnedTrackers = trackerStore.trackers.filter({ $0.isPinned })
+        if !pinnedTrackers.isEmpty {
+            let pinnedCategory = TrackerCategory(header: "Закрепленные", trackers: pinnedTrackers)
+            visibleCategories.insert(pinnedCategory, at: 0)
+        }
+        
         // Перезагружаем коллекцию в соответствии с результатом
         trackerCollectionView.reloadData()
         reloadPlaceholder()
     }
-    
-    // TODO: Дописать логику под отображение emptySearchImage и emptySearchText в случае пустого поиска
-    
-    // Отображаем плейсхолдер если трекеров еще нет
+        
+    // Отображаем плейсхолдер если трекеров нет
     private func reloadPlaceholder() {
+        let isSearchActive = !(searchTextField.text?.isEmpty ?? true) // Если текстовое поле не пустое, то считаем поиск активным
+        
         if trackerCategoryStore.trackerCategories.isEmpty {
             emptyCollectionImage.isHidden = false
             emptyCollectionText.isHidden = false
         } else if visibleCategories.isEmpty {
-            emptyCollectionImage.isHidden = false
-            emptyCollectionText.isHidden = false
-            emptyCollectionText.text = "На этот день задач нет"
+            if isSearchActive { // Условие поиска
+                emptySearchImage.isHidden = false
+                emptySearchText.isHidden = false
+                emptyCollectionImage.isHidden = true
+                emptyCollectionText.isHidden = true
+            } else {
+                emptySearchImage.isHidden = true
+                emptySearchText.isHidden = true
+                emptyCollectionImage.isHidden = false
+                emptyCollectionText.isHidden = false
+                emptyCollectionText.text = "На этот день задач нет"
+            }
         } else {
             emptyCollectionImage.isHidden = true
             emptyCollectionText.isHidden = true
+            emptySearchImage.isHidden = true
+            emptySearchText.isHidden = true
         }
     }
     
@@ -407,6 +430,7 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
 }
 
+// MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     
     // Задаем размер каждого элемента (ячейки) в коллекции
@@ -453,6 +477,26 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         }
     }
 }
+
+// MARK: - UICollectionViewDelegate
+extension TrackersViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let tracker = self.visibleCategories[indexPath.section].trackers[indexPath.row]
+        
+        let menuConfiguration = UIContextMenuConfiguration(identifier: nil, previewProvider: { [weak self] () -> UIViewController? in
+            let previewWidth = collectionView.bounds.width / 2 - 20.0
+            let previewHeight = 90.0
+            return self?.makePreviewViewController(for: tracker, width: previewWidth, height: previewHeight)
+        }) { [weak self] _ in
+            let contextMenu = self?.makeContextMenu(for: tracker)
+            return contextMenu
+        }
+        
+        return menuConfiguration
+    }
+}
+
 
 // MARK: - TrackerCategoryStoreDelegate
 extension TrackersViewController: TrackerCategoryStoreDelegate {

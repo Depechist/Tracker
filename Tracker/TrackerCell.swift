@@ -111,6 +111,14 @@ final class TrackerCell: UICollectionViewCell {
         return image
     }()
     
+    // Иконка пина
+    let pinImageView: UIImageView = {
+        let pinnedTracker = UIImageView()
+        pinnedTracker.image = UIImage(named: "Pin")
+        pinnedTracker.translatesAutoresizingMaskIntoConstraints = false
+        return pinnedTracker
+    }()
+    
     // Метод для "собирания" ячейки
     func configure(with tracker: Tracker, isCompletedToday: Bool, completedDays: Int, indexPath: IndexPath) {
         self.trackerId = tracker.id
@@ -124,30 +132,18 @@ final class TrackerCell: UICollectionViewCell {
         trackerText.text = tracker.title
         emojiLabel.text = tracker.emoji
         
-        let wordDay = pluralizeDays(completedDays)
+        let wordDay = completedDays.pluralizeDays()
         dayCountLabel.text = "\(wordDay)"
         
         let image = isCompletedToday ? doneImage : plusImage
         plusButton.setImage(image, for: .normal)
-    }
-    
-    // Метод для определения написания количества дней (день / дня / дней)
-    private func pluralizeDays(_ count: Int) -> String {
-        let remainder10 = count % 10
-        let remainder100 = count % 100
         
-        if remainder10 == 1 && remainder100 != 11 {
-            return "\(count) день"
-        } else if remainder10 >= 2 && remainder10 <= 4 && (remainder100 < 100 || remainder100 >= 20) {
-            return "\(count) дня"
-        } else {
-            return "\(count) дней"
-        }
+        pinImageView.isHidden = !tracker.isPinned
     }
-    
+
     // Отслеживаем нажатие на кнопку под трекером
     @objc private func plusButtonTapped() {
-        Analytics.shared.tapButton(on: "Main", itemType: .track)
+        Analytics.shared.tapButton(on: .main, itemType: .track)
         
         guard let trackerId = trackerId, let indexPath = indexPath else { return }
         if isCompletedToday {
@@ -172,6 +168,7 @@ final class TrackerCell: UICollectionViewCell {
         upperView.addSubview(trackerText)
         lowerView.addSubview(dayCountLabel)
         lowerView.addSubview(plusButton)
+        lowerView.addSubview(pinImageView)
         
         NSLayoutConstraint.activate([
             upperView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -204,6 +201,9 @@ final class TrackerCell: UICollectionViewCell {
             
             plusButton.centerYAnchor.constraint(equalTo: lowerView.centerYAnchor),
             plusButton.trailingAnchor.constraint(equalTo: lowerView.trailingAnchor, constant: -10),
+            
+            pinImageView.centerYAnchor.constraint(equalTo: emojiBackgroundView.centerYAnchor),
+            pinImageView.trailingAnchor.constraint(equalTo: lowerView.trailingAnchor, constant: -12)
         ])
         
         // Цвет ячейки

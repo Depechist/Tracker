@@ -7,70 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9BE8F683-32BC-4E89-8DE8-CD79BA4F19C7"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/TrackerCreation/NewHabitViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "186"
-            endingLineNumber = "186"
-            landmarkName = "createButtonTapped()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "9BE8F683-32BC-4E89-8DE8-CD79BA4F19C7 - 371248743887fd04"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tracker.NewHabitViewController.createButtonTapped() -&gt; ()"
-                  moduleName = "Tracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dmitryrogov/Documents/tracker/Tracker/TrackerCreation/NewHabitViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "186"
-                  endingLineNumber = "186"
-                  offsetFromSymbolStart = "2000">
-               </Location>
-               <Location
-                  uuid = "9BE8F683-32BC-4E89-8DE8-CD79BA4F19C7 - 371248743887fd04"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tracker.NewHabitViewController.createButtonTapped() -&gt; ()"
-                  moduleName = "Tracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dmitryrogov/Documents/tracker/Tracker/TrackerCreation/NewHabitViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "186"
-                  endingLineNumber = "186"
-                  offsetFromSymbolStart = "2580">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A98C4F95-5BEA-46D3-9483-31E6B9A23280"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/TrackerCreation/NewHabitViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "184"
-            endingLineNumber = "184"
-            landmarkName = "createButtonTapped()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "4067FF2C-3569-4249-919E-91BC7A2097B6"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -78,10 +14,10 @@
             filePath = "Tracker/TrackersViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "359"
-            endingLineNumber = "359"
-            landmarkName = "TrackersViewController"
-            landmarkType = "21">
+            startingLineNumber = "366"
+            endingLineNumber = "366"
+            landmarkName = "completeTracker(id:at:)"
+            landmarkType = "7">
             <Locations>
                <Location
                   uuid = "4067FF2C-3569-4249-919E-91BC7A2097B6 - 8168aaab3b2af3c5"
@@ -126,10 +62,10 @@
             filePath = "Tracker/TrackersViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "361"
-            endingLineNumber = "361"
-            landmarkName = "TrackersViewController"
-            landmarkType = "21">
+            startingLineNumber = "368"
+            endingLineNumber = "368"
+            landmarkName = "completeTracker(id:at:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -144,8 +80,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "152"
             endingLineNumber = "152"
-            landmarkName = "TrackersViewController"
-            landmarkType = "3">
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -160,7 +96,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "160"
             endingLineNumber = "160"
-            landmarkName = "reloadData()"
+            landmarkName = "addButtonTapped()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -176,8 +112,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "188"
             endingLineNumber = "188"
-            landmarkName = "reloadVisibleCategories()"
-            landmarkType = "7">
+            landmarkName = "TrackersViewController"
+            landmarkType = "3">
             <Locations>
                <Location
                   uuid = "BC80354A-C0D9-460D-955E-7D2D0C1F10FF - e44a2e24f78aa416"

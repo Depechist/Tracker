@@ -22,16 +22,16 @@ final class Analytics {
         })
     }
     
-    func openScreen(name: String) {
-        report("open", screen: name)
+    func openScreen(_ screen: Screen) {
+        report("open", screen: screen.rawValue)
     }
     
-    func closeScreen(name: String) {
-        report("close", screen: name)
+    func closeScreen(_ screen: Screen) {
+        report("close", screen: screen.rawValue)
     }
     
-    func tapButton(on screen: String, itemType: ButtonType) {
-        report("click", screen: screen, item: itemType.rawValue)
+    func tapButton(on screen: Screen, itemType: ButtonType) {
+        report("click", screen: screen.rawValue, item: itemType.rawValue)
     }
     
     enum ButtonType: String {
@@ -40,5 +40,9 @@ final class Analytics {
         case filter = "filter"
         case edit = "edit"
         case delete = "delete"
+    }
+    
+    enum Screen: String {
+        case main = "Main"
     }
 }

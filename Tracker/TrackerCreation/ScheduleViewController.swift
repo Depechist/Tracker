@@ -11,7 +11,7 @@ import UIKit
 
 final class ScheduleViewController: UIViewController {
     
-    private var selectedDays = [WeekDay]()
+    var selectedDays = [WeekDay]()
     weak var delegate: ScheduleDelegate?
     
     // MARK: UI ELEMENTS
@@ -121,8 +121,13 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
         switchView.onTintColor = .ypBlue
         switchView.tag = indexPath.row // Важно: сохраняем номер строки как тег
         switchView.addTarget(self, action: #selector(switchChanged), for: .valueChanged)
+        if let currentWeekDay = WeekDay(rawValue: indexPath.row + 1),
+           selectedDays.contains(currentWeekDay) {
+            switchView.setOn(true, animated: false)
+        }
         cell.accessoryView = switchView
         
+
         if indexPath.row == daysOfWeek.count - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
         }

@@ -69,6 +69,16 @@ final class TrackerCategoryStore: NSObject {
         try context.save()
     }
     
+    func moveTracker(to category: TrackerCategory?, tracker: Tracker) throws {
+        try fetchedResultsController.performFetch()
+        guard let objects = self.fetchedResultsController.fetchedObjects else { return }
+        for object in objects {
+            let filteredTrackers = object.trackers?.filter { $0 != tracker.id }
+            object.trackers = filteredTrackers
+        }
+        try addTrackerToCategory(to: category, tracker: tracker)
+    }
+    
     func trackerCategory(from trackerCategoryCoreData: TrackerCategoryCoreData) throws -> TrackerCategory {
         guard let header = trackerCategoryCoreData.header,
               let trackers = trackerCategoryCoreData.trackers
@@ -84,6 +94,10 @@ final class TrackerCategoryStore: NSObject {
         fetchRequest.predicate = NSPredicate(format: "header == %@", header as CVarArg)
         let result = try context.fetch(fetchRequest)
         return result.first
+    }
+    
+    func categoryForTracker(_ tracker: Tracker) -> TrackerCategory? {
+        trackerCategories.filter { $0.trackers.contains(tracker) }.first
     }
 }
 

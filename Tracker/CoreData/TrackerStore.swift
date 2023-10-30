@@ -67,6 +67,19 @@ final class TrackerStore: NSObject {
         try context.save()
     }
     
+    func updateTracker(_ tracker: Tracker) throws {
+        guard let fetchedTracker = try fetchTracker(with: tracker) else {
+            return
+        }
+        fetchedTracker.emoji = tracker.emoji
+        fetchedTracker.title = tracker.title
+        fetchedTracker.color = tracker.color.hexString()
+        fetchedTracker.schedule = tracker.schedule?.map {
+            $0.rawValue
+        }
+        try context.save()
+    }
+    
     func tracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
         guard let id = trackerCoreData.id,
               let date = trackerCoreData.date,
@@ -83,15 +96,21 @@ final class TrackerStore: NSObject {
             emoji: emoji,
             title: title,
             color: color,
+            isPinned: trackerCoreData.isPinned,
             dayCount: Int(trackerCoreData.dayCount),
             schedule: trackerCoreData.schedule?.compactMap { WeekDay(rawValue: $0) }
         )
     }
     
     func deleteTracker(_ tracker: Tracker?) throws {
-        let toDelete = try fetchTracker(with: tracker)
-        guard let toDelete = toDelete else { return }
-        context.delete(toDelete)
+        guard let fetchedTracker = try fetchTracker(with: tracker) else { return }
+        context.delete(fetchedTracker)
+        try context.save()
+    }
+    
+    func pinTracker(_ tracker: Tracker?, isPinned: Bool) throws {
+        guard let fetchedTracker = try fetchTracker(with: tracker) else { return }
+        fetchedTracker.isPinned = isPinned
         try context.save()
     }
     

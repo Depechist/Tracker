@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum WeekDay: Int {
+enum WeekDay: Int, Equatable {
     case sunday = 1 // Согласно системе в Calendar, воскресенье - это 1
     case monday
     case tuesday
