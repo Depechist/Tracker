@@ -33,6 +33,7 @@ final class TrackersViewController: UIViewController {
     private var trackerCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.backgroundColor = .clear
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
         
         // Регистрируем тип ячеек
         collectionView.register(TrackerCell.self, forCellWithReuseIdentifier: "cell")
