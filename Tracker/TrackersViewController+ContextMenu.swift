@@ -17,21 +17,21 @@ extension TrackersViewController {
     }
     
     func makeUnpinAction(for tracker: Tracker) -> UIAction {
-        UIAction(title: "Открепить", handler: { [weak self] _ in
+        UIAction(title: NSLocalizedString("unpinMenu", comment: ""), handler: { [weak self] _ in
             try? self?.trackerStore.pinTracker(tracker, isPinned: false)
             self?.reloadData()
         })
     }
     
     func makePinAction(for tracker: Tracker) -> UIAction {
-        UIAction(title: "Закрепить", handler: { [weak self] _ in
+        UIAction(title: NSLocalizedString("pinMenu", comment: ""), handler: { [weak self] _ in
             try? self?.trackerStore.pinTracker(tracker, isPinned: true)
             self?.reloadData()
         })
     }
     
     func makeEditAction(for tracker: Tracker) -> UIAction {
-        return UIAction(title: "Редактировать", handler: { [weak self] _ in
+        return UIAction(title: NSLocalizedString("editMenu", comment: ""), handler: { [weak self] _ in
             Analytics.shared.tapButton(on: .main, itemType: .edit)
             
             let editVC = NewHabitViewController()
@@ -42,17 +42,17 @@ extension TrackersViewController {
     }
     
     func makeDeleteAction(for tracker: Tracker) -> UIAction {
-        UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+        UIAction(title: NSLocalizedString("deleteMenu", comment: ""), attributes: .destructive) { [weak self] _ in
             Analytics.shared.tapButton(on: .main, itemType: .delete)
             
-            let alertController = UIAlertController(title: nil, message: "Уверены что хотите удалить трекер?", preferredStyle: .actionSheet)
-            let deleteConfirmationAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            let alertController = UIAlertController(title: nil, message: NSLocalizedString("deleteMenuMessage", comment: ""), preferredStyle: .actionSheet)
+            let deleteConfirmationAction = UIAlertAction(title: NSLocalizedString("deleteMenu", comment: ""), style: .destructive) { [weak self] _ in
                 try? self?.trackerStore.deleteTracker(tracker)
                 self?.reloadData()
             }
             alertController.addAction(deleteConfirmationAction)
             
-            let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+            let cancelAction = UIAlertAction(title: NSLocalizedString("cancelMenu", comment: ""), style: .cancel, handler: nil)
             alertController.addAction(cancelAction)
             
             self?.present(alertController, animated: true, completion: nil)

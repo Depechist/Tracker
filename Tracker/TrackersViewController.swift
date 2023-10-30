@@ -58,7 +58,7 @@ final class TrackersViewController: UIViewController {
     // Создаем экземпляр UILabel
     private lazy var mainLabel: UILabel = {
         let mainLabel = UILabel()
-        mainLabel.text = "Трекеры"
+        mainLabel.text = NSLocalizedString("trackersHeaderTitle", comment: "")
         mainLabel.textColor = .ypBlack
         mainLabel.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         return mainLabel
@@ -68,7 +68,7 @@ final class TrackersViewController: UIViewController {
     private lazy var searchTextField: UISearchTextField = {
         let field = UISearchTextField()
         field.backgroundColor = .ypBackground
-        field.placeholder = "Поиск"
+        field.placeholder = NSLocalizedString("searchText", comment: "")
         field.returnKeyType = .done
         // Для работы поиска и отображения соотв коллекций - объявляем делегат
         field.delegate = self
@@ -85,7 +85,7 @@ final class TrackersViewController: UIViewController {
     // Подпись под картинкой-заглушкой
     private lazy var emptyCollectionText: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = NSLocalizedString("emptyCollectionText", comment: "")
         label.textColor = .ypBlack
         label.font = UIFont.systemFont(ofSize: 12)
         return label
@@ -99,7 +99,7 @@ final class TrackersViewController: UIViewController {
     
     private let emptySearchText: UILabel = {
         let emptySearchText = UILabel()
-        emptySearchText.text = "Ничего не найдено"
+        emptySearchText.text = NSLocalizedString("emptySearchText", comment: "")
         emptySearchText.textColor = .ypBlack
         emptySearchText.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         return emptySearchText
@@ -109,7 +109,7 @@ final class TrackersViewController: UIViewController {
         let filtersButton = UIButton()
         filtersButton.layer.cornerRadius = 16
         filtersButton.backgroundColor = .ypBlue
-        filtersButton.setTitle("Фильтры", for: .normal)
+        filtersButton.setTitle(NSLocalizedString("filtersButton", comment: ""), for: .normal)
         filtersButton.addTarget(self, action: #selector(filtersButtonTapped), for: .touchUpInside)
         return filtersButton
     }()
@@ -253,7 +253,8 @@ final class TrackersViewController: UIViewController {
         
         let pinnedTrackers = trackerStore.trackers.filter({ $0.isPinned })
         if !pinnedTrackers.isEmpty {
-            let pinnedCategory = TrackerCategory(header: "Закрепленные", trackers: pinnedTrackers)
+            let pinnedCategory = TrackerCategory(header: NSLocalizedString("pinnedHeader", comment: ""),
+                                                 trackers: pinnedTrackers)
             visibleCategories.insert(pinnedCategory, at: 0)
         }
         
@@ -280,7 +281,7 @@ final class TrackersViewController: UIViewController {
                 emptySearchText.isHidden = true
                 emptyCollectionImage.isHidden = false
                 emptyCollectionText.isHidden = false
-                emptyCollectionText.text = "На этот день задач нет"
+                emptyCollectionText.text = NSLocalizedString("emptyDayText", comment: "")
             }
         } else {
             emptyCollectionImage.isHidden = true

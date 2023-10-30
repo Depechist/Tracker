@@ -81,7 +81,7 @@ final class NewHabitViewController: UIViewController {
     private let recordsLabel: UILabel = {
        let dayCount = UILabel()
         dayCount.translatesAutoresizingMaskIntoConstraints = false
-        dayCount.text = "0 дней"
+        dayCount.text = 0.pluralizeDays()
         dayCount.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         dayCount.textColor = .black
         return dayCount

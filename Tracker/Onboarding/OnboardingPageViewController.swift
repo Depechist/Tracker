@@ -150,12 +150,12 @@ final class OnboardingPageViewController: UIPageViewController {
         // Создаем и добавляем экран Трекеров в TabBar
         let trackersViewController = TrackersViewController()
         trackersViewController.tabBarItem.image = UIImage(named: "TabBarTrackersIcon")
-        trackersViewController.tabBarItem.title = "Трекеры"
+        trackersViewController.tabBarItem.title = NSLocalizedString("tabTrackers", comment: "")
         
         // Создаем и добавляем экран Статистики в TabBar
         let statsViewController = StatisticViewController()
         statsViewController.tabBarItem.image = UIImage(named: "TabBarStatsIcon")
-        statsViewController.tabBarItem.title = "Статистика"
+        statsViewController.tabBarItem.title = NSLocalizedString("tabStatistics", comment: "")
         
         // Оборачиваем его в NavigationController
         let trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
