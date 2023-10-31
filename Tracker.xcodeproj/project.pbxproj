@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2390862F35648D83A8577C3F /* Pods_Tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B82C23C82A3DCB01A62304C2 /* Pods_Tracker.framework */; };
+		8A3080BD2AF0C9F50068D3EC /* FiltersCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3080BC2AF0C9F50068D3EC /* FiltersCell.swift */; };
 		8A3923142A5157BA00DA2752 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3923132A5157BA00DA2752 /* UIColor.swift */; };
 		8A4F23562A518797009DE378 /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F23552A518797009DE378 /* StatisticViewController.swift */; };
 		8A4F23582A519914009DE378 /* TrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4F23572A519914009DE378 /* TrackerCell.swift */; };
@@ -31,6 +32,7 @@
 		8AC2F3A92AF02AAD00D30B29 /* TrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC2F3A82AF02AAD00D30B29 /* TrackerTests.swift */; };
 		8AC2F3B12AF02ABD00D30B29 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 8AC2F3B02AF02ABD00D30B29 /* InlineSnapshotTesting */; };
 		8AC2F3B32AF02ABD00D30B29 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 8AC2F3B22AF02ABD00D30B29 /* SnapshotTesting */; };
+		8AC2F3B62AF0406C00D30B29 /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC2F3B52AF0406C00D30B29 /* FiltersViewController.swift */; };
 		8ACD77212AED464800FC8CEA /* StatisticCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACD77202AED464800FC8CEA /* StatisticCell.swift */; };
 		AD4226E52AC4676900100DB5 /* TrackerCategoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4226E42AC4676900100DB5 /* TrackerCategoryStore.swift */; };
 		ADA13BCA2AEEB42600556243 /* TrackerPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA13BC92AEEB42600556243 /* TrackerPreviewViewController.swift */; };
@@ -67,6 +69,7 @@
 
 /* Begin PBXFileReference section */
 		0638CFED3D6FD27B72ECFAA8 /* Pods-Tracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracker.release.xcconfig"; path = "Target Support Files/Pods-Tracker/Pods-Tracker.release.xcconfig"; sourceTree = "<group>"; };
+		8A3080BC2AF0C9F50068D3EC /* FiltersCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersCell.swift; sourceTree = "<group>"; };
 		8A3923132A5157BA00DA2752 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		8A4F23552A518797009DE378 /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
 		8A4F23572A519914009DE378 /* TrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCell.swift; sourceTree = "<group>"; };
@@ -92,6 +95,7 @@
 		8AC2F39B2AF029FC00D30B29 /* TrackerTests */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TrackerTests; sourceTree = SOURCE_ROOT; };
 		8AC2F3A62AF02AAD00D30B29 /* TrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AC2F3A82AF02AAD00D30B29 /* TrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTests.swift; sourceTree = "<group>"; };
+		8AC2F3B52AF0406C00D30B29 /* FiltersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
 		8ACD77202AED464800FC8CEA /* StatisticCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticCell.swift; sourceTree = "<group>"; };
 		A58F3A57BE108C9136A4EE32 /* Pods-Tracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracker.debug.xcconfig"; path = "Target Support Files/Pods-Tracker/Pods-Tracker.debug.xcconfig"; sourceTree = "<group>"; };
 		AD4226E42AC4676900100DB5 /* TrackerCategoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStore.swift; sourceTree = "<group>"; };
@@ -210,6 +214,7 @@
 				8A9DB7792A63DE3F001896CB /* SectionHeader.swift */,
 				ADA13BF62AEEC7ED00556243 /* TrackerCreation */,
 				8AAAC9AA2AEFAE7200AA7631 /* CategoryCreation */,
+				8AC2F3B42AF0404500D30B29 /* Filter */,
 				ADD066F92AE9883D00FA855B /* Onboarding */,
 				8ACD771D2AED45E800FC8CEA /* Statistics */,
 				8A9DB7742A63D109001896CB /* Models */,
@@ -253,6 +258,15 @@
 				8AC2F3A82AF02AAD00D30B29 /* TrackerTests.swift */,
 			);
 			path = TrackerTests;
+			sourceTree = "<group>";
+		};
+		8AC2F3B42AF0404500D30B29 /* Filter */ = {
+			isa = PBXGroup;
+			children = (
+				8AC2F3B52AF0406C00D30B29 /* FiltersViewController.swift */,
+				8A3080BC2AF0C9F50068D3EC /* FiltersCell.swift */,
+			);
+			path = Filter;
 			sourceTree = "<group>";
 		};
 		8ACD771D2AED45E800FC8CEA /* Statistics */ = {
@@ -462,6 +476,7 @@
 				ADBD90FA2AEECA1800931234 /* Observable.swift in Sources */,
 				8A9DB7782A63D148001896CB /* WeekDayModel.swift in Sources */,
 				8A4F23562A518797009DE378 /* StatisticViewController.swift in Sources */,
+				8A3080BD2AF0C9F50068D3EC /* FiltersCell.swift in Sources */,
 				8AC02C712AED7B950029EDA0 /* Analytics.swift in Sources */,
 				ADBD90FC2AEECA1800931234 /* CategoryViewModel.swift in Sources */,
 				ADA13C162AEEC80B00556243 /* AddTrackerViewController.swift in Sources */,
@@ -479,6 +494,7 @@
 				ADA13C1E2AEEC80B00556243 /* NewEventViewController.swift in Sources */,
 				8A9DB77A2A63DE3F001896CB /* SectionHeader.swift in Sources */,
 				ADBD90F92AEECA1800931234 /* CreateCategoryViewController.swift in Sources */,
+				8AC2F3B62AF0406C00D30B29 /* FiltersViewController.swift in Sources */,
 				8A7CEA532A3B36DC005007D2 /* SceneDelegate.swift in Sources */,
 				ADA13C192AEEC80B00556243 /* NewHabitViewController.swift in Sources */,
 				8A70EB1B2A717AA6002E6409 /* CoreDataModel.xcdatamodeld in Sources */,

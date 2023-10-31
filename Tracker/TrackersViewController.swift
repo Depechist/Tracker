@@ -11,6 +11,11 @@ import UIKit
 
 final class TrackersViewController: UIViewController {
     
+    // Текущий фильтр
+    var selectedFilter: FilterType = .all
+    
+    var savedFilterIndex: IndexPath? = IndexPath(row: 0, section: 0)
+    
     // Храним выбранную в пикере дату
     var currentDate: Date = Date()
     
@@ -120,6 +125,8 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        Analytics.shared.openScreen(.main)
+        
         // Устанавливаем фон для экрана
         view.backgroundColor = .ypWhite
         
@@ -155,6 +162,12 @@ final class TrackersViewController: UIViewController {
         completedTrackers = trackerRecordStore.trackerRecords
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Analytics.shared.closeScreen(.main)
+    }
+    
     // Задаем клик на кнопку + в навбаре
     @objc private func addButtonTapped() {
         Analytics.shared.tapButton(on: .main, itemType: .addTrack)
@@ -167,6 +180,12 @@ final class TrackersViewController: UIViewController {
     // Отслеживаем клик по кнопке Фильтры в Метрике
     @objc private func filtersButtonTapped() {
         Analytics.shared.tapButton(on: .main, itemType: .filter)
+        
+        let modalVC = FiltersViewController()
+        modalVC.delegate = self
+        modalVC.selectedIndexPath = savedFilterIndex
+        modalVC.modalTransitionStyle = .coverVertical
+        present(modalVC, animated: true)
     }
     
     // Задаем закрытие всех модальных экранов в случае отмены создания трекера
@@ -206,9 +225,13 @@ final class TrackersViewController: UIViewController {
         reloadVisibleCategories()
     }
     
+    func didSelectFilterAtIndex(_ indexPath: IndexPath) {
+            savedFilterIndex = indexPath
+    }
+    
     // При изменении даты и с учетом поиска производим фильтрацию массива VisibleCategories
     // по weekDay.numberValue и searchTextField
-    private func reloadVisibleCategories() {
+    func reloadVisibleCategories() {
         let calendar = Calendar.current
         let filterWeekDay = calendar.component(.weekday, from: currentDate)
         let filterText = (searchTextField.text ?? "").lowercased() // Уходим от зависимости от регистра и переводим в lowercased
@@ -237,8 +260,13 @@ final class TrackersViewController: UIViewController {
                     } == true
                 }
                 
-                // Сверяемся с двумя условиями и возвращаем их
-                return textCondition && dateCondition && !tracker.isPinned
+                let completionCondition = isTrackerCompletedToday(id: tracker.id)
+                
+                switch selectedFilter {
+                case .completed: return textCondition && dateCondition && !tracker.isPinned && completionCondition
+                case .notCompleted: return textCondition && dateCondition && !tracker.isPinned && !completionCondition
+                default: return textCondition && dateCondition && !tracker.isPinned
+                }
             }
             
             // ...А также если категория пуста - пропускаем ее
@@ -263,7 +291,7 @@ final class TrackersViewController: UIViewController {
         trackerCollectionView.reloadData()
         reloadPlaceholder()
     }
-        
+    
     // Отображаем плейсхолдер если трекеров нет
     private func reloadPlaceholder() {
         let isSearchActive = !(searchTextField.text?.isEmpty ?? true) // Если текстовое поле не пустое, то считаем поиск активным
@@ -478,6 +506,12 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             assert(false, "Invalid element type for SupplementaryElement")
         }
     }
+    
+    func setCurrentDate() {
+        let date = Date()
+        currentDate = date
+        datePicker.date = date
+    }
 }
 
 // MARK: - UICollectionViewDelegate
@@ -515,4 +549,16 @@ extension TrackersViewController: TrackerRecordStoreDelegate {
     }
 }
 
-
+// MARK: - FiltersViewControllerDelegate
+extension TrackersViewController: FiltersViewControllerDelegate {
+    func didSelectCurrentDay() {
+        self.selectedFilter = .all
+        setCurrentDate()
+        reloadVisibleCategories()
+    }
+    
+    func didSelectFilter(_ filter: FilterType) {
+        self.selectedFilter = filter
+        reloadVisibleCategories()
+    }
+}
