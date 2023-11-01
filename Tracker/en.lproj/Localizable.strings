@@ -1,0 +1,27 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Artem Adiev on 30.10.2023.
+  
+*/
+
+"trackersHeaderTitle" = "Trackers";
+"searchText" = "Search";
+"emptyCollectionText" = "What will we track?";
+"emptyDayText" = "There're no tasks for this day";
+"emptySearchText" = "Nothing found";
+"filtersButton" = "Filters";
+"pinnedHeader" = "Pinned";
+"pinMenu" = "Pin";
+"unpinMenu" = "Unpin";
+"editMenu" = "Edit";
+"deleteMenu" = "Delete";
+"deleteMenuMessage" = "Are you sure?";
+"cancelMenu" = "Cancel";
+"tabTrackers" = "Trackers";
+"tabStatistics" = "Statistics";
+"day" = "%d day";
+"days" = "%d days";
+"manydays" = "%d days";
+

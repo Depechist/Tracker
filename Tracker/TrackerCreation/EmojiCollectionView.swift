@@ -102,4 +102,14 @@ extension EmojiCollectionView: UICollectionViewDelegateFlowLayout {
         let cell = collectionView.cellForItem(at: indexPath) as! EmojiCell
         selectedEmoji = cell.emojiLabel.text
     }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        let emoji = dataManager.emojis[indexPath.row]
+        let isSelected = emoji == selectedEmoji
+        if isSelected {
+            collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .bottom)
+            cell.contentView.backgroundColor = UIColor.ypLightGray
+        }
+    }
 }

@@ -42,13 +42,13 @@ final class ButtonTableViewCell: UITableViewCell {
         let attributedText = NSMutableAttributedString(string: title)
 
         guard let subtitle else {
-            attributedText.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(title.startIndex..<title.endIndex, in: title))
+            attributedText.addAttribute(.foregroundColor, value: UIColor.ypBlack, range: NSRange(title.startIndex..<title.endIndex, in: title))
             titleLabel.attributedText = attributedText
             return
         }
 
         // Create attributed strings with the desired attributes
-        let attrTitle = NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.black])
+        let attrTitle = NSAttributedString(string: title, attributes: [.foregroundColor: UIColor.ypBlack])
         let attrSubtitle = NSAttributedString(string: "\n\(subtitle)", attributes: [.foregroundColor: UIColor.ypGray])
 
         // Combine the two attributed strings
@@ -67,13 +67,24 @@ final class NewHabitViewController: UIViewController {
     private let categoryStore = TrackerCategoryStore()
     private var schedule = [WeekDay]()
     private var selectedCategory: TrackerCategory?
-
+    private var trackerToEdit: Tracker?
+    private var titleTextFieldConstrant: NSLayoutConstraint!
+    
     // MARK: - UI ELEMENTS
     
     // ScrollView для экрана
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         return scrollView
+    }()
+    
+    private let recordsLabel: UILabel = {
+       let dayCount = UILabel()
+        dayCount.translatesAutoresizingMaskIntoConstraints = false
+        dayCount.text = 0.pluralizeDays()
+        dayCount.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        dayCount.textColor = .black
+        return dayCount
     }()
     
     // Поле для ввода названия трекера
@@ -147,6 +158,40 @@ final class NewHabitViewController: UIViewController {
         
         // Добавляем UI элементы
         addSubviews()
+    
+        if let trackerToEdit {
+            updateUIForExisting(tracker: trackerToEdit)
+        }
+    }
+    
+    func fillWith(tracker: Tracker) {
+        trackerToEdit = tracker
+    }
+    
+    private func updateUIForExisting(tracker: Tracker) {
+        
+        // Заголовок модального экрана
+        title = "Редактирование привычки"
+        createButton.setTitle("Сохранить", for: .normal)
+        trackerNameField.text = tracker.title
+        selectedCategory = categoryStore.categoryForTracker(tracker)
+        schedule = tracker.schedule ?? []
+        emojiCollectionView.selectedEmoji = tracker.emoji
+        colorCollectionView.selectedColor = tracker.color
+        
+        scrollView.addSubview(recordsLabel)
+        NSLayoutConstraint.deactivate([
+            titleTextFieldConstrant
+        ])
+        NSLayoutConstraint.activate([
+            recordsLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 38),
+            recordsLabel.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            trackerNameField.topAnchor.constraint(equalTo: recordsLabel.bottomAnchor, constant: 40),
+        ])
+        
+        let completedTrackers = TrackerRecordStore.shared.trackerRecords
+        let completedDays = completedTrackers.filter { $0.trackerId == tracker.id }.count
+        recordsLabel.text = completedDays.pluralizeDays()
     }
     
     // Задаем клик по кнопке "Отменить"
@@ -168,12 +213,33 @@ final class NewHabitViewController: UIViewController {
             return
         }
         
+        // Если это редактирование, то вместо создания редактируем существующий трекер
+        if let trackerToEdit {
+            let updatedTracker = Tracker(id: trackerToEdit.id,
+                                     date: trackerToEdit.date,
+                                     emoji: selectedEmoji,
+                                     title: trackerTitle,
+                                     color: selectedColor,
+                                     isPinned: trackerToEdit.isPinned,
+                                     dayCount: trackerToEdit.dayCount,
+                                     schedule: schedule)
+            do {
+                try trackerStore.updateTracker(updatedTracker)
+                try categoryStore.moveTracker(to: selectedCategory, tracker: updatedTracker)
+                // Сообщаем, что экраны можно закрывать
+                NotificationCenter.default.post(name: NSNotification.Name("CloseAllModals"), object: nil)
+            } catch let error {
+                print(error)
+            }
+            return
+        }
+
         // Если поле не пустое - создаем трекер
         let newTracker = Tracker(id: UUID(),
                                  date: Date(),
                                  emoji: selectedEmoji,
                                  title: trackerTitle,
-                                 color: selectedColor,
+                                 color: selectedColor, isPinned: false,
                                  dayCount: 1,
                                  schedule: schedule)
         
@@ -221,6 +287,8 @@ final class NewHabitViewController: UIViewController {
         buttonTableView.dataSource = self
         buttonTableView.delegate = self
         
+        titleTextFieldConstrant = trackerNameField.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 24)
+        
         NSLayoutConstraint.activate([
             // ScrollView
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -229,7 +297,7 @@ final class NewHabitViewController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
             // Имя трекера
-            trackerNameField.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 24),
+            titleTextFieldConstrant,
             trackerNameField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             trackerNameField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             trackerNameField.heightAnchor.constraint(equalToConstant: 75),
@@ -318,6 +386,7 @@ extension NewHabitViewController: UITableViewDataSource, UITableViewDelegate {
         // Если вторая кнопка, то открываем расписание
         else if indexPath.row == 1 {
             let scheduleVC = ScheduleViewController()
+            scheduleVC.selectedDays = schedule
             scheduleVC.delegate = self
             present(scheduleVC, animated: true)
         }

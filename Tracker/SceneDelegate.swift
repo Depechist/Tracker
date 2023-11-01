@@ -32,18 +32,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             // Создаем и добавляем экран Трекеров в TabBar
             let trackersViewController = TrackersViewController()
             trackersViewController.tabBarItem.image = UIImage(named: "TabBarTrackersIcon")
-            trackersViewController.tabBarItem.title = "Трекеры"
+            trackersViewController.tabBarItem.title = NSLocalizedString("tabTrackers", comment: "")
             
             // Создаем и добавляем экран Статистики в TabBar
-            let statsViewController = StatsViewController()
+            let statsViewController = StatisticViewController()
             statsViewController.tabBarItem.image = UIImage(named: "TabBarStatsIcon")
-            statsViewController.tabBarItem.title = "Статистика"
+            statsViewController.tabBarItem.title = NSLocalizedString("tabStatistics", comment: "")
             
             // Оборачиваем его в NavigationController
             let trackersNavigationController = UINavigationController(rootViewController: trackersViewController)
             
             // Создаем экземпляр TapBarController
             let tabBarController = UITabBarController()
+            let separatorImage = UIImage()
+            tabBarController.tabBar.barTintColor = .ypBlack
+            tabBarController.tabBar.shadowImage = separatorImage
+            tabBarController.tabBar.backgroundImage = separatorImage
+            tabBarController.tabBar.layer.borderWidth = 0.50
+            tabBarController.tabBar.clipsToBounds = true
             
             // Добавляем контроллер навигации в TapBarController
             tabBarController.viewControllers = [trackersNavigationController, statsViewController]
